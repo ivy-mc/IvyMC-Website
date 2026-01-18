@@ -18,16 +18,20 @@
         display: flex;
 
         .popup__content {
-            animation: outing 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both !important;
-            -webkit-animation: outing 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both !important;
+            animation: outing 0.25s cubic-bezier(0.550, 0.085, 0.680, 0.530) both !important;
+            -webkit-animation: outing 0.25s cubic-bezier(0.550, 0.085, 0.680, 0.530) both !important;
+            box-shadow: none !important;
+            border: 2px solid transparent !important;
 
             @keyframes outing {
                 0% {
                     transform: scale(1);
+                    opacity: 1;
                 }
 
                 100% {
-                    transform: scale(.3);
+                    transform: scale(0.7);
+                    opacity: 0;
                 }
             }
         }
@@ -35,26 +39,40 @@
 
     &__content {
         position: relative;
-        min-width: 500px;
-        background-color: #171722;
+        min-width: 700px;
+        max-width: 800px;
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
         border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         transform: translateZ(-100px);
-        -webkit-animation: slide .4s cubic-bezier(.25, .46, .45, .94) both;
-        animation: slide .4s cubic-bezier(.25, .46, .45, .94) both;
 
-        @media screen and (max-width: 576px) {
+        @media screen and (max-width: 768px) {
             width: 90%;
             min-width: 90%;
+            max-width: 90%;
+            max-height: 85vh;
         }
 
-        @keyframes slide {
-            0% {
-                transform: scale(.7);
+        &--custom {
+            animation: slide .4s cubic-bezier(.25, .46, .45, .94) both, pulse-border-custom 2s ease-in-out infinite !important;
+
+            @keyframes slide {
+                0% {
+                    transform: scale(.7);
+                }
+                100% {
+                    transform: scale(1);
+                }
             }
 
-            100% {
-                transform: scale(1);
+            @keyframes pulse-border-custom {
+                0%, 100% {
+                    box-shadow: var(--shadow-base) !important;
+                }
+                50% {
+                    box-shadow: var(--shadow-pulse) !important;
+                }
             }
         }
 
@@ -62,30 +80,16 @@
         $header-footer-height: 20px;
 
         &__body {
-            padding: $padding;
-            max-height: 70vh;
-            overflow-y: auto;
-
-            @media screen and (max-width: 576px) {
-                max-height: 65vh;
-            }
-
-            &::-webkit-scrollbar {
-                width: 8px;
-                outline: none;
-                border: none;
-                background: 0 0;
-                padding: 3px;
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: #262631;
-                border-radius: 7px;
-            }
-
-            &::-webkit-scrollbar-track {
-                background: transparent;
-                border-radius: 7px;
+            padding: 15px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: visible;
+            min-height: 0;
+            
+            @media screen and (max-width: 768px) {
+                padding: 12px 15px;
             }
 
             p {
@@ -100,7 +104,7 @@
         &__header {
             display: flex;
             justify-content: flex-end;
-            border-bottom: 1px solid #292935;
+            border-bottom: 1px solid rgba(45, 122, 79, 0.5);
             height: $header-footer-height;
             padding: $padding;
             position: relative;
@@ -126,10 +130,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border-top: 1px solid #292935;
+            border-top: none;
             gap: 10px;
             min-height: $header-footer-height;
             padding: $padding;
+            padding-top: 0;
         }
     }
 }

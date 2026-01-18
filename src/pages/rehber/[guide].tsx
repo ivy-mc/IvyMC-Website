@@ -20,7 +20,7 @@ type GuideProps = {
 GuidePage.getLayout = function getLayout(page: React.ReactNode, pageProps: GuideProps) {
     return (
         <Layout
-            title={"OrleansMC - " + pageProps.guide.attributes.title}
+            title={"IvyMC - " + pageProps.guide.attributes.title}
             description={Util.cleanMarkdown(pageProps.guide.attributes.description).slice(0, 150)}
             ogDescription={Util.cleanMarkdown(pageProps.guide.attributes.description).slice(0, 150)}
             user={pageProps.user}

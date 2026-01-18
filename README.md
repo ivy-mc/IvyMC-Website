@@ -21,7 +21,7 @@ Visit the website here: [orleansmc.com](https://orleansmc.com)
 - **News and Blog** system (managed via **Strapi CMS**)
 - **Guides and Tutorials** section
 - **Store** integration for ranks and items
-- **Discord OAuth2** account linking
+- **Discord OAuth2** account linking with automatic role synchronization
 - **Secure password reset** flow via email
 - **Responsive Design** for desktop and mobile
 - **Admin/Server dashboard** endpoints (API level)
@@ -63,6 +63,16 @@ npm install
 ```
 
 Create an `.env` file and configure your environment variables (MongoDB, MySQL, Redis, Email Service, etc.).
+
+**Important**: Make sure to add Discord role IDs to your `.env` file for automatic role assignment:
+```env
+DISCORD_ROLE_OYUNCU=your_role_id
+DISCORD_ROLE_CIRAK=your_role_id
+DISCORD_ROLE_ASIL=your_role_id
+DISCORD_ROLE_SOYLU=your_role_id
+DISCORD_ROLE_SENYOR=your_role_id
+```
+See `.env.example` for a complete configuration template.
 
 Run the development server:
 

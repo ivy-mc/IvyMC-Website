@@ -35,7 +35,7 @@ export default function CategoryCard(props: {
                         <Button
                             type="link"
                             href={props.href}
-                            className="z-20 mt-4 bg-blue-500 hover:bg-blue-400 w-fit">
+                            className="z-20 mt-4 bg-green-500 hover:bg-green-400 w-fit">
                             {props.button_text}
                         </Button>
                     </div>

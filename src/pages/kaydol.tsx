@@ -10,16 +10,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import React from 'react'
-import ReCAPTCHA from "react-google-recaptcha";
+import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 
 
 RegisterPage.getLayout = function getLayout(page: React.ReactNode, pageProps: PageProps) {
     return (
         <Layout
             user={pageProps.user}
-            title="OrleansMC - Kaydol"
-            description="OrleansMC Minecraft sunucusuna kaydolun."
-            ogDescription="OrleansMC Minecraft sunucusuna kaydolun."
+            title="IvyMC - Kaydol"
+            description="IvyMC Minecraft sunucusuna kaydolun."
+            ogDescription="IvyMC Minecraft sunucusuna kaydolun."
         >
             {page}
         </Layout>
@@ -28,10 +28,11 @@ RegisterPage.getLayout = function getLayout(page: React.ReactNode, pageProps: Pa
 
 export default function RegisterPage(props: PageProps) {
     const router = useRouter();
-    const recaptchaRef = React.createRef<ReCAPTCHA>();
+    const turnstileRef = React.useRef<TurnstileInstance>(null);
 
     const [errorMessage, setErrorMessage] = React.useState<string>('');
-    const [recaptchaVisible, setRecaptchaVisible] = React.useState<boolean>(false);
+    const [turnstileVisible, setTurnstileVisible] = React.useState<boolean>(false);
+    const [turnstileToken, setTurnstileToken] = React.useState<string>('');
     const [submitting, setSubmitting] = React.useState<boolean>(false);
     const [pinRequested, setPinRequested] = React.useState<boolean>(false);
     const [pendingEmail, setPendingEmail] = React.useState<string>('');
@@ -45,14 +46,15 @@ export default function RegisterPage(props: PageProps) {
             return;
         }
 
-        const token = recaptchaRef.current?.getValue();
+        const token = turnstileToken;
         if (!token && !pinRequested) {
-            setRecaptchaVisible(true);
+            setTurnstileVisible(true);
             return;
         }
 
-        recaptchaRef.current?.reset();
-        setRecaptchaVisible(false);
+        turnstileRef.current?.reset();
+        setTurnstileVisible(false);
+        setTurnstileToken('');
 
         const username = (e.currentTarget.querySelector('#username') as HTMLInputElement)?.value || pendingUsername;
         const email = (e.currentTarget.querySelector('#email') as HTMLInputElement)?.value || pendingEmail;
@@ -140,7 +142,7 @@ export default function RegisterPage(props: PageProps) {
         <div className='w-full flex justify-between items-center mt-36 mb-36 gap-28 flex-wrap' data-aos="fade-up">
             <div className='flex-[5_0_0%] flex justify-end items-end min-w-[23rem] md:min-w-0'>
                 <Image
-                    src="/uploads/wizard_90f703e5a7.png"
+                    src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571598/wizard_90f703e5a7_3b2f279546.png"
                     alt="Register Image"
                     placeholder='blur'
                     blurDataURL='/uploads/thumbnail_wizard_94979b4765.png'
@@ -200,11 +202,15 @@ export default function RegisterPage(props: PageProps) {
                             }
                         </div>
                     </>}
-                    <ReCAPTCHA
-                        style={{ display: recaptchaVisible ? 'block' : 'none' }}
-                        ref={recaptchaRef}
-                        className='mt-2 w-min'
-                        sitekey="6LfqPi4qAAAAAIK5m2YK_iSDStqsCzU1FPBwLcK8"
+                    <Turnstile
+                        ref={turnstileRef}
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        options={{
+                            theme: 'dark',
+                        }}
+                        style={{ display: turnstileVisible ? 'block' : 'none' }}
+                        className='mt-2'
                     />
                     <label className='flex items-center m-1'>
                         <input

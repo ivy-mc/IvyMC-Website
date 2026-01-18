@@ -44,14 +44,14 @@ if (!global.pendingMetadatasInterval) {
  */
 export function pushMetadata(accessToken: string, metadata?: {
     oyuncu: number;
-    lord: number;
-    titan: number;
-    yuce: number;
-    legend: number;
+    cirak: number;
+    asil: number;
+    soylu: number;
+    senyor: number;
 }) {
     // PUT /users/@me/applications/:id/role-connection
     const body = {
-        platform_name: 'OrleansMC Role Connection',
+        platform_name: 'IvyMC Role Connection',
         metadata: metadata || {}
     };
     global.pendingMetadatas.push({ accessToken, body });
@@ -64,10 +64,10 @@ export function pushMetadata(accessToken: string, metadata?: {
 export async function getMetadata(accessToken: string): Promise<{
     metadata: {
         oyuncu: number;
-        lord: number;
-        titan: number;
-        yuce: number;
-        legend: number;
+        cirak: number;
+        asil: number;
+        soylu: number;
+        senyor: number;
     };
 }> {
     // GET /users/@me/applications/:id/role-connection
@@ -97,27 +97,27 @@ export async function registerMetadata() {
             type: 7,
         },
         {
-            key: 'lord',
-            name: 'Lord',
-            description: 'Lord rütbesine sahip oyuncu',
+            key: 'cirak',
+            name: 'Çırak',
+            description: 'Çırak rütbesine sahip oyuncu',
             type: 7,
         },
         {
-            key: 'titan',
-            name: 'Titan',
-            description: 'Titan rütbesine sahip oyuncu',
+            key: 'asil',
+            name: 'Asil',
+            description: 'Asil rütbesine sahip oyuncu',
             type: 7,
         },
         {
-            key: 'yuce',
-            name: 'Yüce',
-            description: 'Yüce rütbesine sahip oyuncu',
+            key: 'soylu',
+            name: 'Soylu',
+            description: 'Soylu rütbesine sahip oyuncu',
             type: 7,
         },
         {
-            key: 'legend',
-            name: 'Legend',
-            description: 'Legend rütbesine sahip oyuncu',
+            key: 'senyor',
+            name: 'Senyor',
+            description: 'Senyor rütbesine sahip oyuncu',
             type: 7,
         },
     ];

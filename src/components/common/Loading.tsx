@@ -8,7 +8,7 @@ export default function Loading({ loading }: { loading: boolean }) {
         loop={true}
         autoplay={true}
         mode="normal"
-        src="/uploads/loading_ffa81742de.json"
+        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768634023/Loading_667818a988.json"
     />
 
     return (

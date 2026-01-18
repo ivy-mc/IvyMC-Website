@@ -9,9 +9,9 @@ import styles from "@/styles/blog.module.scss";
 UserAgament.getLayout = function getLayout(page: React.ReactNode, pageProps: PageProps) {
     return (
         <Layout
-            title="OrleansMC - Kullanım Şartları"
-            description="OrleansMC kullanım şartları sayfası."
-            ogDescription="OrleansMC kullanım şartları sayfası."
+            title="IvyMC - Kullanım Şartları"
+            description="IvyMC kullanım şartları sayfası."
+            ogDescription="IvyMC kullanım şartları sayfası."
             user={pageProps.user}
         >
             {page}
@@ -31,17 +31,17 @@ export default function UserAgament() {
                     before:bg-gradient-to-r before:from-purple-900/80 before:to-indigo-800/80 
                     before:z-10'>
                     <h1 className='text-4xl font-semibold text-center z-20'>
-                        OrleansMC Kullanım Şartları
+                        IvyMC Kullanım Şartları
                     </h1>
                     <p className='text-center text-xl mt-4 z-20'>
-                        OrleansMC kullanım şartları sayfası.
+                        IvyMC kullanım şartları sayfası.
                     </p>
                 </div>
             </div>
             <div className={styles.blog} data-aos="fade-up">
                 <h2 className="!mb-6">Son güncellenme: 27/08/2024</h2>
                 <p>
-                    Sevgili ziyaretçimiz, lütfen https://orleansmc.com web sitemizi ziyaret etmeden önce işbu
+                    Sevgili ziyaretçimiz, lütfen https://ivymc.com web sitemizi ziyaret etmeden önce işbu
                     kullanım koşulları sözleşmesini dikkatlice okuyunuz. Siteye erişiminiz
                     tamamen bu sözleşmeyi kabulünüze ve bu sözleşme ile belirlenen
                     şartlara uymanıza bağlıdır. Şayet bu sözleşmede yazan herhangi
@@ -51,7 +51,7 @@ export default function UserAgament() {
                     lütfen unutmayınız.
                 </p>
                 <p>
-                    https://orleansmc.com web sitesi OrleansMC tarafından yönetilmekte olup, bundan sonra SİTE olarak anılacaktır.
+                    https://ivymc.com web sitesi IvyMC tarafından yönetilmekte olup, bundan sonra SİTE olarak anılacaktır.
                     İşbu siteye ilişkin Kullanım Koşulları, yayınlanmakla yürürlüğe girer.
                     Değişiklik yapma hakkı, tek taraflı olarak SİTE'ye aittir ve
                     SİTE üzerinden güncel olarak paylaşılacak olan bu değişiklikleri,
@@ -66,7 +66,7 @@ export default function UserAgament() {
                 </p>
                 <h2>Hizmet Kapsamı</h2>
                 <p>
-                    OrleansMC olarak, sunacağımız hizmetlerin kapsamını ve niteliğini, yasalar
+                    IvyMC olarak, sunacağımız hizmetlerin kapsamını ve niteliğini, yasalar
                     çerçevesinde belirlemekte tamamen serbest olup; hizmetlere ilişkin yapacağımız
                     değişiklikler, SİTE'de yayınlanmakla yürürlüğe girmiş sayılacaktır.
                 </p>
@@ -74,7 +74,7 @@ export default function UserAgament() {
                 <p>
                     SİTE'de yayınlanan tüm metin, kod, grafikler,
                     logolar, resimler, ses dosyaları ve kullanılan yazılımın sahibi
-                    (bundan böyle ve daha sonra "içerik" olarak anılacaktır) OrleansMC olup,
+                    (bundan böyle ve daha sonra "içerik" olarak anılacaktır) IvyMC olup,
                     tüm hakları saklıdır. Yazılı izin olmaksızın site içeriğinin çoğaltılması veya kopyalanması
                     kesinlikle yasaktır.
                 </p>

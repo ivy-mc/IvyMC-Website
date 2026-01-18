@@ -1,4 +1,5 @@
 import Button from '@/components/common/Button'
+import PendingMembershipAlert from '@/components/profile/PendingMembershipAlert'
 import AuthManager, { User } from '@/lib/server/auth/AuthManager'
 import { PageProps } from '@/types'
 import { GetServerSideProps } from 'next'
@@ -25,6 +26,9 @@ export default function ProfilePage({ user }: PageProps) {
 
     return (
         <div data-aos="fade">
+            {/* Pending Membership Alert */}
+            <PendingMembershipAlert userEmail={user.email} />
+            
             <div className='flex items-start justify-between md:flex-col-reverse md:gap-6'>
                 <h2 className='text-3xl font-semibold text-white'>Profil</h2>
                 <span className={
@@ -40,7 +44,7 @@ export default function ProfilePage({ user }: PageProps) {
             <div className='blog !m-0 !p-0'>
                 <blockquote className='text-lg text-zinc-300 mt-6 !bg-dark-700 !text-balance'>
                     <p>
-                        OrleansMC'de oynadığın için teşekkür ederiz!
+                        IvyMC'de oynadığın için teşekkür ederiz!
                         Buradan profilini yönetebilirsin.
                         Eğer kafana takılan bir şey olursa destek almak için bize ulaşmaktan çekinme!
                     </p>

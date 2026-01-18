@@ -35,12 +35,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return res.status(400).json({ name: (error as Error).message });
     }
 
-    const captchaResponse = await axios.get(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${encodeURIComponent(captcha)}`
+    const captchaResponse = await axios.post(
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        new URLSearchParams({
+            secret: process.env.TURNSTILE_SECRET_KEY!,
+            response: captcha,
+        }),
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        }
     ).then((res) => res.data).catch(() => { });
     if (!captchaResponse?.success) {
-        ConsoleManager.warn("Login", "Invalid recaptcha token from " + ip);
-        return res.status(400).json({ name: 'invalid recaptcha token' });
+        ConsoleManager.warn("Login", "Invalid turnstile token from " + ip);
+        return res.status(400).json({ name: 'invalid turnstile token' });
     };
 
     try {

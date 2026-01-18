@@ -33,15 +33,23 @@ export default async function ResetPasswordHandler(req: NextApiRequest, res: Nex
         return res.status(400).json({ name: "Invalid email" });
     }
 
-    const captchaResponse = await axios.get(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${encodeURIComponent(captcha)}`
+    const captchaResponse = await axios.post(
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        new URLSearchParams({
+            secret: process.env.TURNSTILE_SECRET_KEY!,
+            response: captcha,
+        }),
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        }
     ).then((res) => res.data).catch(() => { });
-
 
     const ip = AuthManager.getInstance().getIpFromRequest(req) || "unknown";
     if (!captchaResponse?.success) {
-        ConsoleManager.warn("Login", "Invalid recaptcha token from " + ip);
-        return res.status(400).json({ name: 'invalid recaptcha token' });
+        ConsoleManager.warn("ResetPassword", "Invalid turnstile token from " + ip);
+        return res.status(400).json({ name: 'invalid turnstile token' });
     };
 
     const user = await AuthManager.getInstance().getWebUserByEmail(email);
@@ -52,7 +60,7 @@ export default async function ResetPasswordHandler(req: NextApiRequest, res: Nex
     const forgotPasswordToken = await AuthManager.getInstance().generateResetPasswordToken(user.username);
     await EmailManager.getInstance().sendEmail(
         user.email,
-        "OrleansMC Şifre Sıfırlama",
+        "IvyMC Şifre Sıfırlama",
         undefined,
         resetMailTemplate.replace("{URL}", `${process.env.WEBSITE_URL}/sifre-sifirla/${encodeURIComponent(forgotPasswordToken)
             }`)

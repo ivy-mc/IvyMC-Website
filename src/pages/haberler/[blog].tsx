@@ -18,7 +18,7 @@ type BlogProps = {
 BlogPage.getLayout = function getLayout(page: React.ReactNode, pageProps: BlogProps) {
     return (
         <Layout
-            title={"OrleansMC - " + pageProps.blog.attributes.title}
+            title={"IvyMC - " + pageProps.blog.attributes.title}
             description={Util.cleanMarkdown(pageProps.blog.attributes.description).slice(0, 150)}
             ogDescription={Util.cleanMarkdown(pageProps.blog.attributes.description).slice(0, 150)}
             user={pageProps.user}

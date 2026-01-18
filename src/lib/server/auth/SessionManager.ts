@@ -80,4 +80,11 @@ export default class SessionManager {
             }
         });
     }
+
+    public async updateUsernameInSessions(oldUsername: string, newUsername: string): Promise<void> {
+        await this.collection.updateMany(
+            { username: oldUsername },
+            { $set: { username: newUsername } }
+        );
+    }
 }

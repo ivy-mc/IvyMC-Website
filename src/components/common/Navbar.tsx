@@ -20,22 +20,23 @@ export default function Navbar(navbarProps: {
         {
             name: "Ana Sayfa",
             url: "/",
-            bg: "bg-blue-500"
+            bg: "bg-green-500"
         },
         {
             name: "Haberler",
             url: "/haberler",
-            bg: "bg-blue-500"
+            bg: "bg-green-500"
         },
         {
             name: "Rehber",
             url: "/rehber",
-            bg: "bg-blue-500"
+            bg: "bg-green-500"
         },
         {
             name: "Mağaza",
             url: "/magaza",
-            bg: "bg-purple-500"
+            bg: "bg-green-500",
+            special: true
         }
     ]
 
@@ -64,15 +65,18 @@ export default function Navbar(navbarProps: {
     const coinRef = React.createRef<HTMLTemplateElement>();
 
     // @ts-ignore
-    const lottie = <lottie-player
-        id="upgrade_crown"
-        ref={coinRef}
-        speed={1}
-        loop={true}
-        hover={false}
-        mode="normal"
-        src="/uploads/coins_75c0679ecf.json"
-    />
+    const coinIcon = (
+        <lottie-player
+            id="navbar_coin_icon"
+            ref={coinRef}
+            speed={1}
+            loop={true}
+            autoplay={true}
+            mode="normal"
+            style={{ width: '28px', height: '28px', marginTop: '1px', pointerEvents: 'none' }}
+            src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
+        />
+    );
 
     const menuButton = <button className={
         `hidden lg:block ${styles["navbar-toggle-button"]}${menuOpen ? " " + styles["active"] : ""}`
@@ -103,14 +107,28 @@ export default function Navbar(navbarProps: {
                                 <li key={index} className="flex items-center" onClick={() => {
                                     setMenuOpen(false);
                                 }}>
-                                    <Button
-                                        type="link" href={navigator.url}
-                                        blank={navigator.url.startsWith("http") || navigator.url.includes("kredi-yukle")}
-                                        className={((navigator.url == "/" && router.pathname == "/") ||
-                                            (navigator.url != "/" && router.pathname.startsWith(navigator.url))
-                                            ? `${navigator.bg} ` : "") + `hover:${navigator.bg} lg:!text-2xl lg:px-10 lg:py-2`}>
-                                        {navigator.name}
-                                    </Button>
+                                    {navigator.special ? (
+                                        <div className={styles["store-button-wrapper"] + 
+                                            (((navigator.url == "/" && router.pathname == "/") ||
+                                            (navigator.url != "/" && router.pathname.startsWith(navigator.url))) ? 
+                                            " " + styles["active"] : "")}>
+                                            <Button
+                                                type="link" href={navigator.url}
+                                                blank={navigator.url.startsWith("http") || navigator.url.includes("kredi-yukle")}
+                                                className="hover:bg-transparent lg:!text-2xl lg:px-10 lg:py-2">
+                                                {navigator.name}
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <Button
+                                            type="link" href={navigator.url}
+                                            blank={navigator.url.startsWith("http") || navigator.url.includes("kredi-yukle")}
+                                            className={((navigator.url == "/" && router.pathname == "/") ||
+                                                (navigator.url != "/" && router.pathname.startsWith(navigator.url))
+                                                ? `${navigator.bg} ` : "") + `hover:${navigator.bg} lg:!text-2xl lg:px-10 lg:py-2`}>
+                                            {navigator.name}
+                                        </Button>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -118,26 +136,16 @@ export default function Navbar(navbarProps: {
                 </div>
                 <div className="flex space-x-4">
                     {!navbarProps.user && (<>
-                        <Button type="link" href="/kaydol" className="bg-purple-500 hover:bg-blue-500 hover:bg-purple-500 hover:!bg-purple-400">
+                        <Button type="link" href="/kaydol" className="bg-orange-500 hover:!bg-orange-400">
                             <span>Kaydol</span>
                         </Button>
-                        <Button type="link" href="/giris-yap" className="bg-green-500 hover:!bg-green-400">
+                        <Button type="link" href="/giris-yap" className="bg-blue-500 hover:!bg-blue-400">
                             <span>Giriş Yap</span>
                         </Button></>)}
                     {
                         navbarProps.user && (
                             <div className="flex items-center gap-2">
-                                <Link href={`/profil`} className="flex items-center gap-2" onMouseEnter={
-                                    () => {
-                                        const lottiePlayer = coinRef.current as any;
-                                        lottiePlayer?.play();
-                                    }
-                                } onMouseLeave={
-                                    () => {
-                                        const lottiePlayer = coinRef.current as any;
-                                        lottiePlayer?.pause();
-                                    }
-                                }>
+                                <Link href={`/profil`} className="flex items-center gap-2">
                                     <div
                                         className="flex flex-col">
                                         <div className="flex items-center justify-center font-medium leading-5">
@@ -147,9 +155,9 @@ export default function Navbar(navbarProps: {
                                             <span>
                                                 {new Intl.NumberFormat().format(navbarProps.user.player.credit).replaceAll(",", ".")}
                                             </span>
-                                            <span
-                                                className="w-6 h-6"
-                                            >{lottie}</span>
+                                            <span className="w-7 h-7 flex items-center justify-center">
+                                                {coinIcon}
+                                            </span>
                                         </div>
                                     </div>
                                     <Image

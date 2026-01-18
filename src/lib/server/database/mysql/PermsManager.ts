@@ -30,7 +30,7 @@ export default class PermsManager {
             });
         }
 
-        setInterval(this.checkPermissions, 10000);
+        //setInterval(this.checkPermissions, 10000);
     }
 
     public static getInstance(): PermsManager {
@@ -43,23 +43,30 @@ export default class PermsManager {
 
     getPlayerPrimaryGroupByUUID(uuid: string) {
         const permissions = userPermissionsMap.get(uuid) || [];
-        if (permissions.includes('group.legend')) {
-            return 'legend';
-        } else if (permissions.includes('group.yuce')) {
-            return 'yuce';
-        } else if (permissions.includes('group.titan')) {
-            return 'titan';
-        } else if (permissions.includes('group.lord')) {
-            return 'lord';
+        
+        // Rütbe önceliği: En yüksekten en düşüğe
+        if (permissions.includes('group.senyor')) {
+            return 'senyor';
+        } else if (permissions.includes('group.soylu')) {
+            return 'soylu';
+        } else if (permissions.includes('group.asil')) {
+            return 'asil';
+        } else if (permissions.includes('group.cirak')) {
+            return 'cirak';
+        } else if (permissions.includes('group.oyuncu')) {
+            return 'oyuncu';
         } else {
-            return null;
+            return 'player';
         }
     }
 
     // İzinleri kontrol eden fonksiyon
     async checkPermissions() {
         try {
-            const permissionsToCheck = ['group.lord', 'group.titan', 'group.yuce', 'group.legend'];
+            const permissionsToCheck = [
+                'group.player', 'group.oyuncu', 'group.cirak', 'group.asil', 
+                'group.soylu', 'group.senyor'
+            ];
             const results = await LuckPermsUserPermissions.findAll({
                 where: {
                     permission: {
@@ -99,10 +106,10 @@ export default class PermsManager {
 
                     pushMetadata(discordAccount.access_token, {
                         oyuncu: 1,
-                        lord: permissions.includes('group.lord') ? 1 : 0,
-                        titan: permissions.includes('group.titan') ? 1 : 0,
-                        yuce: permissions.includes('group.yuce') ? 1 : 0,
-                        legend: permissions.includes('group.legend') ? 1 : 0
+                        cirak: permissions.includes('group.cirak') ? 1 : 0,
+                        asil: permissions.includes('group.asil') ? 1 : 0,
+                        soylu: permissions.includes('group.soylu') ? 1 : 0,
+                        senyor: permissions.includes('group.senyor') ? 1 : 0
                     });
 
                     ConsoleManager.info('PermsManager', `${playerName} oyuncusunun metadatası güncellendi`);

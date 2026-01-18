@@ -51,8 +51,7 @@ function cssLoaderOptions(modules) {
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    webpackBuildWorker: true,
-    instrumentationHook: true
+    webpackBuildWorker: true
   },
   poweredByHeader: false,
   sassOptions: {
@@ -62,6 +61,19 @@ const nextConfig = {
     remotePatterns: [
       {
         hostname: 'flagcdn.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com'
+      },
+      {
+        hostname: 'ideal-memory-acda41f12c.strapiapp.com'
+      },
+      {
+        hostname: 'ideal-memory-acda41f12c.media.strapiapp.com'
+      },
+      {
+        hostname: 'orleansmc.com'
       }
     ],
   },
@@ -73,7 +85,7 @@ const nextConfig = {
     return [
       {
         source: "/uploads/:path*",
-        destination: "https://orleansmc.com/uploads/:path*",
+        destination: "https://ideal-memory-acda41f12c.media.strapiapp.com/:path*",
       },
     ];
   },
@@ -86,7 +98,7 @@ const nextConfig = {
       },
       {
         source: "/kredi-yukle",
-        destination: "https://buymeacoffee.com/orleansmc/extras",
+        destination: "https://buymeacoffee.com/ivymc/extras",
         permanent: false,
       },
       {

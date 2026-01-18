@@ -50,3 +50,50 @@
         z-index: 999;
     }
 }
+
+.store-button-wrapper {
+    position: relative;
+    border-radius: 0.5rem;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 0.5rem;
+        padding: 1.5px;
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.3)
+        );
+        background-size: 200% 100%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    &:hover::before {
+        opacity: 1;
+        animation: shimmer-move 2s linear infinite;
+    }
+
+    &.active::before {
+        opacity: 1;
+        animation: shimmer-move 2s linear infinite;
+    }
+
+    @keyframes shimmer-move {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+}

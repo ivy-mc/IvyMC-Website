@@ -19,6 +19,7 @@ import requestIp from 'request-ip';
 declare global {
     var authManager: AuthManager;
     var pendingRegistrations: Map<string, PendingRegistration>;
+    var pendingEmailChanges: Map<string, PendingEmailChange>;
 }
 
 type UserCommon = {
@@ -46,6 +47,13 @@ export type PendingRegistration = {
     username: string;
 }
 
+export type PendingEmailChange = {
+    pin: string;
+    username: string;
+    newEmail: string;
+    createdAt: number;
+}
+
 export type ResetPasswordRequest = {
     username: string;
     key: string;
@@ -53,6 +61,7 @@ export type ResetPasswordRequest = {
 }
 
 const pinMailTemplate: string = fs.readFileSync('src/lib/server/email/PINTemplate.html', { encoding: 'utf-8' });
+const emailChangePinTemplate: string = pinMailTemplate.replace('PIN Doğrulama', 'E-posta Değiştirme Doğrulama').replace('Hesabınızı oluşturmak için', 'E-posta adresinizi değiştirmek için');
 
 export default class AuthManager {
     public userCollection: Collection<WebUser>;
@@ -64,6 +73,9 @@ export default class AuthManager {
         this.resetPasswordRequests = MongoManager.getInstance().websiteDatabase.collection("reset_password_requests");
         if (!global.pendingRegistrations) {
             global.pendingRegistrations = new Map();
+        }
+        if (!global.pendingEmailChanges) {
+            global.pendingEmailChanges = new Map();
         }
 
         setInterval(async () => {
@@ -124,6 +136,104 @@ export default class AuthManager {
         await MysqlManager.getInstance().changePassword(username, hashedPassword);
         await this.userCollection.updateOne({ _id: username.toLowerCase() }, { $set: { password: hashedPassword } });
         ConsoleManager.info("AuthManager", "Kullanıcı şifresi değiştirildi: " + username);
+    }
+
+    public async changeEmail(username: string, password: string, newEmail: string, pin?: string): Promise<{ requiresPin: boolean; message: string }> {
+        const user = await this.getWebUser(username);
+        if (!user) {
+            throw new Error("Kullanıcı bulunamadı.");
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            throw new Error("Şifre yanlış.");
+        }
+
+        if (!Util.isValidEmail(newEmail)) {
+            throw new Error("Geçersiz e-posta adresi.");
+        }
+
+        const emailUser = await this.getWebUserByEmail(newEmail);
+        if (emailUser && emailUser._id !== username.toLowerCase()) {
+            throw new Error("Bu e-posta adresi zaten kullanılmakta.");
+        }
+
+        if (user.email.toLowerCase() === newEmail.toLowerCase()) {
+            throw new Error("Yeni e-posta eski e-posta ile aynı olamaz.");
+        }
+
+        const pendingChange = global.pendingEmailChanges.get(username.toLowerCase());
+
+        // Eğer PIN gelmediyse, PIN oluştur ve gönder
+        if (!pin) {
+            // Eğer zaten pending bir değişiklik varsa ve aynı email ise
+            if (pendingChange && pendingChange.newEmail === newEmail.toLowerCase()) {
+                // 2 dakikadan eski değilse, aynı PIN'i kullan
+                if (Date.now() - pendingChange.createdAt < 2 * 60 * 1000) {
+                    ConsoleManager.info("AuthManager", `E-posta değişikliği için PIN zaten gönderildi: ${username} -> ${newEmail}`);
+                    return { requiresPin: true, message: "Doğrulama kodu e-posta adresinize gönderildi." };
+                }
+            }
+
+            // Yeni PIN oluştur
+            const newPin = Util.generateNumericPin();
+            global.pendingEmailChanges.set(username.toLowerCase(), {
+                pin: newPin,
+                username: username.toLowerCase(),
+                newEmail: newEmail.toLowerCase(),
+                createdAt: Date.now()
+            });
+
+            ConsoleManager.info("AuthManager", `E-posta değişikliği için PIN oluşturuldu: ${username} -> ${newEmail} - ${newPin}`);
+
+            try {
+                await EmailManager.getInstance().sendEmail(
+                    newEmail,
+                    "IvyMC E-posta Değiştirme Doğrulama",
+                    undefined,
+                    emailChangePinTemplate.replace('{PIN}', newPin)
+                );
+            } catch (error) {
+                global.pendingEmailChanges.delete(username.toLowerCase());
+                ConsoleManager.error("AuthManager", `E-posta gönderilemedi: ${username} -> ${newEmail} - ${error}`);
+                throw new Error(`E-posta gönderilemedi: ${(error as Error).message}`);
+            }
+
+            // 5 dakika sonra pending değişikliği sil
+            setTimeout(() => {
+                const current = global.pendingEmailChanges.get(username.toLowerCase());
+                if (current && current.createdAt === pendingChange?.createdAt) {
+                    global.pendingEmailChanges.delete(username.toLowerCase());
+                    ConsoleManager.info("AuthManager", `E-posta değişikliği zaman aşımına uğradı: ${username}`);
+                }
+            }, 5 * 60 * 1000);
+
+            return { requiresPin: true, message: "Doğrulama kodu yeni e-posta adresinize gönderildi." };
+        }
+
+        // PIN geldi, doğrula
+        if (!pendingChange) {
+            throw new Error("Doğrulama kodunun süresi doldu. Lütfen tekrar deneyin.");
+        }
+
+        if (pendingChange.newEmail !== newEmail.toLowerCase()) {
+            throw new Error("E-posta adresi değiştirildi. Lütfen tekrar deneyin.");
+        }
+
+        if (pendingChange.pin !== pin) {
+            throw new Error("Doğrulama kodu yanlış.");
+        }
+
+        // PIN doğru, e-postayı değiştir
+        await this.userCollection.updateOne(
+            { _id: username.toLowerCase() }, 
+            { $set: { email: newEmail.toLowerCase(), updated_at: new Date().toISOString() } }
+        );
+        
+        global.pendingEmailChanges.delete(username.toLowerCase());
+        ConsoleManager.info("AuthManager", `Kullanıcı e-postası değiştirildi: ${username} -> ${newEmail}`);
+        
+        return { requiresPin: false, message: "E-posta adresiniz başarıyla değiştirildi." };
     }
 
     public async generateResetPasswordToken(username: string): Promise<string> {
@@ -236,9 +346,9 @@ export default class AuthManager {
             pendingRegistrations.set(username, { pin, email, password, username });
             ConsoleManager.info("AuthManager", "Kullanıcı kaydı için pin oluşturuldu: " + email + " - " + pin);
 
-            EmailManager.getInstance().sendEmail(
+            await EmailManager.getInstance().sendEmail(
                 email,
-                "OrleansMC Kayıt Doğrulama",
+                "IvyMC Kayıt Doğrulama",
                 undefined,
                 pinMailTemplate.replace('{PIN}', pin)
             );

@@ -109,35 +109,43 @@ export default class RankManager {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${process.env.STRAPI_TOKEN}`
                     }
-                }).then((response) => response.data.data.attributes.products as CreditMarket);
+                }).then((response) => {
+                    // Extract the products object which contains ranks array
+                    const productsData = response.data.data?.products || response.data.data?.attributes?.products || { ranks: [], crates: [] };
+                    return productsData as CreditMarket;
+                });
 
-            this.ranks = result.data.map((rank) => {
-                const creditMarketProduct = creditMarket.ranks.find((product) => product.id === rank.attributes.credit_market_id);
+            this.ranks = result.data.map((rank: any) => {
+                if (!rank.credit_market_id) {
+                    console.warn(`[RanksManager] Rank "${rank.title}" has no credit_market_id, skipping...`);
+                    return null;
+                }
+                const creditMarketProduct = creditMarket.ranks?.find((product) => product.id === rank.credit_market_id);
                 const rankResult = {
                     id: rank.id,
                     attributes: {
-                        title: rank.attributes.title,
-                        credit_market_id: rank.attributes.credit_market_id,
-                        discount_percentage: rank.attributes.discount_percentage || null,
-                        discount_end_date: rank.attributes.discount_end_date || null,
+                        title: rank.title,
+                        credit_market_id: rank.credit_market_id,
+                        discount_percentage: rank.discount_percentage || null,
+                        discount_end_date: rank.discount_end_date || null,
                         price: creditMarketProduct?.price || null,
                         item: creditMarketProduct?.item || null,
-                        privileges: rank.attributes.privileges,
+                        privileges: typeof rank.privileges === 'string' ? JSON.parse(rank.privileges) : rank.privileges,
                         commands: creditMarketProduct?.commands || null,
-                        publishedAt: rank.attributes.publishedAt,
+                        publishedAt: rank.publishedAt,
                         icon: {
                             data: {
                                 attributes: {
-                                    name: rank.attributes.icon.data.attributes.name,
-                                    width: rank.attributes.icon.data.attributes.width,
-                                    height: rank.attributes.icon.data.attributes.height,
-                                    url: rank.attributes.icon.data.attributes.url,
-                                    blurhash: rank.attributes.icon.data.attributes.blurhash,
+                                    name: rank.icon.name,
+                                    width: rank.icon.width,
+                                    height: rank.icon.height,
+                                    url: rank.icon.url,
+                                    blurhash: rank.icon.blurhash || null,
                                     formats: {
                                         thumbnail: {
-                                            url: rank.attributes.icon.data.attributes.formats.thumbnail.url,
-                                            width: rank.attributes.icon.data.attributes.formats.thumbnail.width,
-                                            height: rank.attributes.icon.data.attributes.formats.thumbnail.height
+                                            url: rank.icon.formats.thumbnail.url,
+                                            width: rank.icon.formats.thumbnail.width,
+                                            height: rank.icon.formats.thumbnail.height
                                         }
                                     }
                                 }
@@ -157,7 +165,8 @@ export default class RankManager {
                 }
                 
                 return rankResult;
-            }).sort((a, b) => {
+            }).filter((rank): rank is Rank => rank !== null)
+            .sort((a, b) => {
                 return new Date(a.attributes.publishedAt).getTime() - new Date(b.attributes.publishedAt).getTime();
             });
             return this.ranks;

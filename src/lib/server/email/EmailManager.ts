@@ -11,11 +11,11 @@ export default class EmailManager {
 
     private constructor() {
         this.transporter = nodemailer.createTransport({
-            host: 'smtp.mailgun.org',
+            host: 'smtp.eu.mailgun.org',
             port: 587,
             secure: false,
             auth: {
-                user: 'postmaster@orleansmc.com',
+                user: process.env.MAILGUN_USER,
                 pass: process.env.MAILGUN_PASSWORD
             },
         });
@@ -36,7 +36,7 @@ export default class EmailManager {
 
         const response = await this.transporter.sendMail(
             {
-                from: 'OrleansMC <do_not_reply@orleansmc.com>',
+                from: `IvyMC <${process.env.MAILGUN_USER}>`,
                 to: to,
                 subject: subject,
                 text: text!,

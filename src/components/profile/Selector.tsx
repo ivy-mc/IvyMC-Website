@@ -20,6 +20,10 @@ export default function Selector({ user, children }: PageProps) {
             title: 'Şifre Değiştir',
             href: '/profil/sifre-degistir',
         },
+        {
+            title: 'E-posta Değiştir',
+            href: '/profil/eposta-degistir',
+        },
     ];
 
     return (
@@ -32,7 +36,7 @@ export default function Selector({ user, children }: PageProps) {
                             <li className={
                                 `text-zinc-100 font-normal text-lg ` +
                                 `p-3 rounded-md duration-300 md:py-2 md:px-4 cursor-pointer w-full inline-block`
-                                + (router.pathname === nav.href ? ' bg-violet-500' : ' hover:bg-violet-500')
+                                + (router.pathname === nav.href ? ' bg-green-500' : ' hover:bg-green-500')
                             }
                                 onClick={() => router.push(nav.href, undefined, {
                                     shallow: false,

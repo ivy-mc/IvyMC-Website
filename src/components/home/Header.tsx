@@ -1,10 +1,10 @@
 import Image from "next/image";
 import React from "react";
 import Button from "../common/Button";
-import PopUp from "../common/PopUp";
 
 export default function Hero() {
-    const [popUp, setPopUp] = React.useState<boolean>(false);
+    const [copied, setCopied] = React.useState<boolean>(false);
+    const [isHovered, setIsHovered] = React.useState<boolean>(false);
     const [playerCount, setPlayerCount] = React.useState<number>(0);
     const [online, setOnline] = React.useState<boolean>(false);
 
@@ -17,54 +17,57 @@ export default function Hero() {
         })();
     }, []);
 
+    const handleCopy = () => {
+        navigator.clipboard.writeText("Oyna.IvyMC.Com");
+        setCopied(true);
+        setTimeout(() => {
+            setCopied(false);
+        }, 1500);
+    };
+
     return (
         <>
-            <PopUp show={popUp} onClose={() => {
-                setPopUp(false);
-            }}
-                footer={
-                    <Button type="button" onClick={() => {
-                        setPopUp(false);
-                    }} className="bg-green-500/85 hover:bg-green-500">
-                        Tamam
-                    </Button>
-                }
-
-                title="IP Adresi Kopyalandı!"
-            >
-                <div className="flex justify-center items-center flex-col">
-                    <p className="text-lg text-center w-3/4 pb-4 text-zinc-400">
-                        Sunucumuza dilediğiniz launcher üzerinden 1.21.1 sürümüyle giriş yapabilirsiniz.
-                    </p>
-                    <Image
-                        src="/uploads/orleansip_0a181de93f.gif"
-                        alt="OrleansMC IP"
-                        width={500}
-                        height={500}
-                    />
-                </div>
-            </PopUp>
             <header data-aos="fade-down" data-offset="100">
                 <div className="flex flex-col justify-center items-center h-[47rem]">
                     <Image className=""
-                        src="/uploads/logo_ae2b79e367.png" alt="Logo"
+                        src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571477/logo_3619be7de1.png" alt="Logo"
                         quality={100}
-                        placeholder="blur"
-                        blurDataURL={"/uploads/thumbnail_logo_ae2b79e367.png"}
+                        placeholder="empty"
                         width={245 * 2.6}
                         height={53 * 2.6}
                     />
-                    <Button type="button" onClick={() => {
-                        navigator.clipboard.writeText("Oyna.OrleansMC.Com");
-                        setPopUp(true);
-                    }}
-                        className="bg-gray-500/85 hover:bg-gray-500 mt-10">
-                        <span className="material-symbols-rounded !text-4xl !max-w-[36px]">
-                            sports_esports
-                        </span>
-                        <span>Oyna.OrleansMC.Com</span>
-                        <span>{playerCount}</span>
-                    </Button>
+                    <div className="mt-10"
+                        onMouseEnter={() => !copied && setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}>
+                        <button 
+                            onClick={handleCopy}
+                            className="flex items-center space-x-2 text-center text-lg rounded-md font-bold text-white 
+                            transition-all duration-300 leading-7 px-8 py-4 cursor-pointer shadow-lg
+                            bg-gray-500/85 hover:bg-gray-500 min-w-[340px] h-[60px] justify-center overflow-hidden relative">
+                            <div className={`flex items-center space-x-2 transition-all duration-300 ease-out absolute
+                                ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                                <span className="material-symbols-rounded !text-4xl !max-w-[36px]">
+                                    done
+                                </span>
+                                <span className="text-green-300">Kopyalandı!</span>
+                            </div>
+                            <div className={`flex items-center space-x-2 transition-all duration-300 ease-out absolute
+                                ${isHovered && !copied ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                                <span className="material-symbols-rounded !text-4xl !max-w-[36px]">
+                                    content_copy
+                                </span>
+                                <span>Panoya Kopyala</span>
+                            </div>
+                            <div className={`flex items-center space-x-2 transition-all duration-300 ease-out absolute
+                                ${!isHovered && !copied ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                                <span className="material-symbols-rounded !text-4xl !max-w-[36px]">
+                                    sports_esports
+                                </span>
+                                <span>Oyna.IvyMC.Com</span>
+                                <span>{playerCount}</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </header>
         </>

@@ -13,9 +13,9 @@ ProfilePage.getLayout = function getLayout(page: React.ReactNode, pageProps: any
     return (
         <Layout profile
             user={pageProps.user}
-            title="OrleansMC - Profil"
-            description="OrleansMC sunucusundaki profilinizi yönetin."
-            ogDescription="OrleansMC sunucusundaki profilinizi yönetin."
+            title="IvyMC - Profil"
+            description="IvyMC sunucusundaki profilinizi yönetin."
+            ogDescription="IvyMC sunucusundaki profilinizi yönetin."
         >
             {page}
         </Layout>
@@ -121,7 +121,7 @@ export default function ProfilePage({ user }: PageProps) {
                     <input
                         type='submit'
                         value='Şifreyi Değiştir'
-                        className='mt-6 w-full p-3 bg-violet-500 text-zinc-200 rounded-lg hover:bg-violet-400 duration-300 cursor-pointer'
+                        className='mt-6 w-full p-3 bg-green-500 text-zinc-200 rounded-lg hover:bg-green-400 duration-300 cursor-pointer'
                     />
                 </form>
             </div>

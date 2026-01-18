@@ -13,9 +13,9 @@ type BlogsProps = InferGetServerSidePropsType<typeof getServerSideProps> & PageP
 BlogsPage.getLayout = function getLayout(page: React.ReactNode, pageProps: BlogsProps) {
     return (
         <Layout
-            title="OrleansMC - Haberler"
-            description="OrleansMC sunucusundaki en son güncellemeleri, etkinlikleri ve daha fazlasını buradan takip edebilirsiniz."
-            ogDescription="OrleansMC sunucusundaki en son güncellemeleri, etkinlikleri ve daha fazlasını buradan takip edebilirsiniz."
+            title="IvyMC - Haberler"
+            description="IvyMC sunucusundaki en son güncellemeleri, etkinlikleri ve daha fazlasını buradan takip edebilirsiniz."
+            ogDescription="IvyMC sunucusundaki en son güncellemeleri, etkinlikleri ve daha fazlasını buradan takip edebilirsiniz."
             user={pageProps.user}
         >
             {page}

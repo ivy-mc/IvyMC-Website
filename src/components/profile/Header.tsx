@@ -64,20 +64,21 @@ export default function ProfileHeader({ user }: { user: User }) {
             </PopUp>
             <div className='
                 flex flex-col relative p-12 md:px-0 md:py-8 rounded-lg 
-                shadow-lg bg-[url("/uploads/lake_56a90cdd03.png")] bg-cover bg-center 
+                shadow-lg bg-[url("https://res.cloudinary.com/dkcpwrjza/image/upload/v1768594458/profile_bg_fdc9ab1335.png")] bg-cover bg-center 
                 bg-no-repeat bg-opacity-90 h-96 md:h-full 
                 before:bg-black before:bg-opacity-60 before:absolute before:inset-0 z-10
+                overflow-hidden
                 ' data-aos="fade-down"
             >
-                <div className='flex flex-row items-center justify-center gap-4 md:flex-col overflow-x-hidden'>
-                    <div data-aos="fade-right" data-aos-delay="1000">
+                <div className='flex flex-row items-center justify-center gap-4 md:flex-col'>
+                    <div data-aos="fade-right" data-aos-delay="1000" className='flex-shrink-0'>
                         <Image
                             loading='eager'
-                            className='mr-6 md:!m-0'
+                            className='mr-6 md:!m-0 max-w-[280px] md:max-w-[240px] h-auto'
                             unoptimized
                             src={avatar}
-                            width={300}
-                            height={300}
+                            width={280}
+                            height={280}
                             alt='Avatar'
                         />
                     </div>

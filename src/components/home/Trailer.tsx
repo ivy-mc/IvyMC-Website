@@ -8,9 +8,9 @@ export default function Trailer() {
         <section className="flex flex-col justify-center items-center space-y-8" data-aos="fade-up" data-offset="100">
             <div className="flex flex-col justify-center items-center">
                 <h2 className="text-3xl font-semibold mb-3 text-center"
-                >OrleansMC'yi Keşfedin</h2>
+                >IvyMC'yi Keşfedin</h2>
                 <p className="text-lg text-center text-zinc-400"
-                >Sunucumuzun tanıtım videosunu izleyerek OrleansMC'nin dünyasını keşfedin!</p>
+                >Sunucumuzun tanıtım videosunu izleyerek IvyMC'nin dünyasını keşfedin!</p>
             </div>
             <div className="w-3/4 rounded-lg overflow-hidden shadow-lg md:w-full">
                 <LiteYouTubeEmbed
@@ -18,7 +18,7 @@ export default function Trailer() {
                     thumbnail="/uploads/castle_entrance_3ef073eff4.png"
                     id="nkIAsR0UBfY"
                     params="afmt=251&rel=0"
-                    title="OrleansMC Trailer"
+                    title="IvyMC Trailer"
                 />
             </div>
         </section>

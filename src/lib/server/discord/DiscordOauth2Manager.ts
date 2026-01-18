@@ -3,6 +3,7 @@ import ConsoleManager from "../logs/ConsoleManager";
 import { Collection } from "mongodb";
 import MongoManager from "../database/mongo/MongoManager";
 import { registerMetadata } from "./MetadataUtil";
+import axios from "axios";
 
 declare global {
     var discordOauth2Manager: DiscordOauth2Manager;
@@ -136,5 +137,25 @@ export default class DiscordOauth2Manager {
 
     public async updateAccount(account: DiscordAccount) {
         return this.accounts.updateOne({ _id: account._id }, { $set: account }, { upsert: true });
+    }
+
+    public async assignRole(guildId: string, userId: string, roleId: string): Promise<boolean> {
+        try {
+            await axios.put(
+                `https://discord.com/api/v10/guilds/${guildId}/members/${userId}/roles/${roleId}`,
+                {},
+                {
+                    headers: {
+                        "Authorization": `Bot ${process.env.BOT_TOKEN}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            ConsoleManager.info("DiscordOauth2Manager", `Role ${roleId} assigned to user ${userId}`);
+            return true;
+        } catch (error) {
+            ConsoleManager.error("DiscordOauth2Manager", `Failed to assign role ${roleId} to user ${userId}: ${error}`);
+            return false;
+        }
     }
 }

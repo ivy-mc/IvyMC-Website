@@ -1,6 +1,12 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .before\:bg-black::before {
+    content: '';
+  }
+}
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -116,7 +122,7 @@ input {
   content: " ";
   position: absolute;
   z-index: -1;
-  background: rgba(96, 51, 202, 0.15); //Custom color
+  background: rgba(34, 197, 94, 0.15); //Green glow
   mask: radial-gradient(circle at 50% 0%, black 0%, transparent 70%);
   right: 0;
   top: 0;

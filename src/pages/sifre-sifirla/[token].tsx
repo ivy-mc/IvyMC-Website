@@ -14,9 +14,9 @@ import React from 'react'
 ResetPasswordTokenPage.getLayout = function getLayout(page: React.ReactNode, pageProps: PageProps) {
     return (
         <Layout
-            title="OrleansMC - Şifre Sıfırla"
-            description="OrleansMC sunucusundaki şifrenizi sıfırlayın."
-            ogDescription="OrleansMC sunucusundaki şifrenizi sıfırlayın."
+            title="IvyMC - Şifre Sıfırla"
+            description="IvyMC sunucusundaki şifrenizi sıfırlayın."
+            ogDescription="IvyMC sunucusundaki şifrenizi sıfırlayın."
             user={pageProps.user}
         >
             {page}
@@ -78,7 +78,7 @@ export default function ResetPasswordTokenPage(props: PageProps & { token: strin
             <div className='w-full flex justify-between items-center mt-36 mb-36 gap-28 flex-wrap' data-aos="fade-down">
                 <div className='flex-[5_0_0%] flex justify-end items-end min-w-[23rem] md:min-w-0'>
                     <Image
-                        src="/uploads/wizard_90f703e5a7.png"
+                        src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571598/wizard_90f703e5a7_3b2f279546.png"
                         alt="Register Image"
                         placeholder='blur'
                         blurDataURL='/uploads/thumbnail_wizard_90f703e5a7.png'

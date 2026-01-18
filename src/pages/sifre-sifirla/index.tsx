@@ -10,14 +10,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import React from 'react'
-import ReCAPTCHA from "react-google-recaptcha";
+import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 
 ResetPasswordPage.getLayout = function getLayout(page: React.ReactNode, pageProps: PageProps) {
     return (
         <Layout
-            title="OrleansMC - Şifre Sıfırla"
-            description="OrleansMC sunucusundaki şifrenizi sıfırlayın."
-            ogDescription="OrleansMC sunucusundaki şifrenizi sıfırlayın."
+            title="IvyMC - Şifre Sıfırla"
+            description="IvyMC sunucusundaki şifrenizi sıfırlayın."
+            ogDescription="IvyMC sunucusundaki şifrenizi sıfırlayın."
             user={pageProps.user}
         >
             {page}
@@ -27,10 +27,11 @@ ResetPasswordPage.getLayout = function getLayout(page: React.ReactNode, pageProp
 
 export default function ResetPasswordPage(props: PageProps) {
     const router = useRouter();
-    const recaptchaRef = React.createRef<ReCAPTCHA>();
+    const turnstileRef = React.useRef<TurnstileInstance>(null);
 
     const [errorMessage, setErrorMessage] = React.useState<string>('');
     const [successMessage, setSuccessMessage] = React.useState<string>('');
+    const [turnstileToken, setTurnstileToken] = React.useState<string>('');
     const [submitting, setSubmitting] = React.useState<boolean>(false);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,13 +41,14 @@ export default function ResetPasswordPage(props: PageProps) {
             return;
         }
 
-        const token = recaptchaRef.current?.getValue();
+        const token = turnstileToken;
         if (!token) {
-            setErrorMessage('Lütfen reCAPTCHA doğrulamasını yapın.');
+            setErrorMessage('Lütfen Turnstile doğrulamasını yapın.');
             return;
         }
 
-        recaptchaRef.current?.reset();
+        turnstileRef.current?.reset();
+        setTurnstileToken('');
         const email = (e.currentTarget.querySelector('#email') as HTMLInputElement).value;
 
         if (!Util.isValidEmail(email)) {
@@ -76,7 +78,7 @@ export default function ResetPasswordPage(props: PageProps) {
             <div className='w-full flex justify-between items-center mt-36 mb-36 gap-28 flex-wrap' data-aos="fade-down">
                 <div className='flex-[5_0_0%] flex justify-end items-end min-w-[23rem] md:min-w-0'>
                     <Image
-                        src="/uploads/wizard_90f703e5a7.png"
+                        src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571598/wizard_90f703e5a7_3b2f279546.png"
                         alt="Register Image"
                         placeholder='blur'
                         blurDataURL='/uploads/thumbnail_wizard_90f703e5a7.png'
@@ -107,10 +109,14 @@ export default function ResetPasswordPage(props: PageProps) {
                             type="email"
                             placeholder="E-Posta Adresi"
                         />
-                        <ReCAPTCHA
-                            ref={recaptchaRef}
-                            className='mt-2 w-min'
-                            sitekey="6LfqPi4qAAAAAIK5m2YK_iSDStqsCzU1FPBwLcK8"
+                        <Turnstile
+                            ref={turnstileRef}
+                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                            onSuccess={(token) => setTurnstileToken(token)}
+                            options={{
+                                theme: 'dark',
+                            }}
+                            className='mt-2'
                         />
                         <button
                             type="submit"

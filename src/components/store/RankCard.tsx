@@ -17,9 +17,20 @@ export default function RankCard(props: {
         end_date: string | Date;
     };
     icon: string;
+    privileges?: {
+        rank: string;
+        color: string;
+        groups: {
+            title: string;
+            privileges: {
+                icon_id: string;
+                text: string;
+            }[];
+        }[];
+    };
 }) {
     const [showPopup, setShowPopup] = React.useState(false);
-    const [purchasing, setPurchasing] = React.useState(false);
+    const [purchasing, setPurchasing] = React.useState<'balance' | 'card' | null>(null);
     const coinRef = React.useRef<HTMLTemplateElement>(null);
     const coinRef2 = React.useRef<HTMLTemplateElement>(null);
 
@@ -35,6 +46,62 @@ export default function RankCard(props: {
     
     const _price = Math.floor(props.price * 100 / (100 - (props.discount?.percentage || 0)));
     const price = props.price;
+    
+    // TL fiyatı hesapla (EUR → TRY kuru: 38.5)
+    const EUR_TO_TRY = 38.5;
+    const priceInTRY = Math.floor(price * EUR_TO_TRY);
+    const _priceInTRY = Math.floor(_price * EUR_TO_TRY);
+
+    // Rütbe renklerini tanımla
+    const rankColors: Record<string, { border: string; shadow: string; text: string; gradient: string; borderHex: string; popupShadow: string; }> = {
+        'cirak': {
+            border: 'hover:border-gray-500/50',
+            shadow: 'hover:shadow-[0_0_20px_rgba(107,114,128,0.3)]',
+            text: 'text-gray-400',
+            gradient: 'linear-gradient(135deg, #374151 0%, #4b5563 100%)',
+            borderHex: '#6b7280',
+            popupShadow: '0 0 20px rgba(107,114,128, 0.5), 0 0 40px rgba(107,114,128, 0.3), 0 0 60px rgba(107,114,128, 0.1)'
+        },
+        'asil': {
+            border: 'hover:border-orange-500/50',
+            shadow: 'hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]',
+            text: 'text-orange-400',
+            gradient: 'linear-gradient(135deg, #7c2d12 0%, #9a3412 100%)',
+            borderHex: '#f97316',
+            popupShadow: '0 0 20px rgba(249,115,22, 0.5), 0 0 40px rgba(249,115,22, 0.3), 0 0 60px rgba(249,115,22, 0.1)'
+        },
+        'soylu': {
+            border: 'hover:border-yellow-500/50',
+            shadow: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]',
+            text: 'text-yellow-400',
+            gradient: 'linear-gradient(135deg, #713f12 0%, #854d0e 100%)',
+            borderHex: '#eab308',
+            popupShadow: '0 0 20px rgba(234,179,8, 0.5), 0 0 40px rgba(234,179,8, 0.3), 0 0 60px rgba(234,179,8, 0.1)'
+        },
+        'senyor': {
+            border: 'hover:border-purple-500/50',
+            shadow: 'hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+            text: 'text-purple-400',
+            gradient: 'linear-gradient(135deg, #581c87 0%, #6b21a8 100%)',
+            borderHex: '#a855f7',
+            popupShadow: '0 0 20px rgba(168,85,247, 0.5), 0 0 40px rgba(168,85,247, 0.3), 0 0 60px rgba(168,85,247, 0.1)'
+        }
+    };
+
+    const currentRankColor = rankColors[props.credit_market_id] || {
+        border: 'hover:border-green-500/50',
+        shadow: 'hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]',
+        text: 'text-green-400',
+        gradient: 'linear-gradient(135deg, #1a4d2e 0%, #1e5a35 100%)',
+        borderHex: '#2ecc71',
+        popupShadow: '0 0 20px rgba(46, 204, 113, 0.5), 0 0 40px rgba(46, 204, 113, 0.3), 0 0 60px rgba(46, 204, 113, 0.1)'
+    };
+
+    const popupRankColor = {
+        border: currentRankColor.borderHex,
+        shadow: currentRankColor.popupShadow,
+        gradient: currentRankColor.gradient
+    };
 
     const buttonId = Util.slugify(props.title) + "_buy";
 
@@ -44,9 +111,10 @@ export default function RankCard(props: {
         ref={coinRef}
         speed={1}
         loop={true}
-        hover={false}
         mode="normal"
-        src="/uploads/coins_75c0679ecf.json"
+        autoplay={true}
+        style={{ pointerEvents: 'none' }}
+        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
     />
 
     // @ts-ignore
@@ -55,18 +123,36 @@ export default function RankCard(props: {
         ref={coinRef2}
         speed={1}
         loop={true}
-        hover={false}
         mode="normal"
-        src="/uploads/coins_75c0679ecf.json"
+        autoplay={true}
+        style={{ pointerEvents: 'none' }}
+        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
     />
 
-    const randomId = Math.random().toString(36).substring(7);
+    const [randomId, setRandomId] = React.useState<string>("");
     const iconId = "rank_card_" + randomId;
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
     const [alreadyHasARank, setAlreadyHasARank] = React.useState<boolean>(false);
+    const [balanceError, setBalanceError] = React.useState<boolean>(false);
 
     const router = useRouter();
+
+    // Random ID'yi client-side oluştur (hydration error'ı önlemek için)
+    React.useEffect(() => {
+        setRandomId(Math.random().toString(36).substring(7));
+    }, []);
+
+    // Icon hover animasyonu
+    const handleCardMouseEnter = () => {
+        const icon = document.getElementById(iconId);
+        icon?.classList.add("animate__flip", "animate__animated");
+    };
+
+    const handleCardMouseLeave = () => {
+        const icon = document.getElementById(iconId);
+        icon?.classList.remove("animate__flip", "animate__animated");
+    };
 
     return (
         <>
@@ -74,18 +160,7 @@ export default function RankCard(props: {
                 show={showPopup}
                 title={props.title}
                 onClose={() => setShowPopup(false)}
-                onMouseEnter={
-                    () => {
-                        const lottiePlayer = coinRef2.current as any;
-                        lottiePlayer?.play();
-                    }
-                }
-                onMouseLeave={
-                    () => {
-                        const lottiePlayer = coinRef2.current as any;
-                        lottiePlayer?.pause();
-                    }
-                }
+                rankColor={popupRankColor}
                 footer={
                     alreadyHasARank ? <Button
                         type="button"
@@ -122,34 +197,8 @@ export default function RankCard(props: {
                                 Tamam
                             </Button>
                                 :
-                                props.user ?
+                                !props.user ?
                                     <Button
-                                        type="button"
-                                        onClick={async () => {
-                                            if (purchasing) return;
-                                            setPurchasing(true);
-                                            const response = await fetch("/api/store/purchase/rank/" + Util.slugify(props.credit_market_id), {
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json"
-                                                },
-                                                body: JSON.stringify({})
-                                            });
-
-                                            if (response.status === 200) {
-                                                setSuccessMessage("Satın alma işlemi başarılı!");
-                                            } else {
-                                                const data = await response.json();
-                                                setErrorMessage(data.name);
-                                            }
-                                            setPurchasing(false);
-                                        }}
-                                        className="bg-blue-500 hover:bg-blue-400 w-fit"
-                                    >
-                                        {purchasing ? "Satın Alınıyor..." : "Onayla"}
-                                    </Button>
-
-                                    : <Button
                                         type="button"
                                         onClick={() => {
                                             setShowPopup(false);
@@ -159,10 +208,34 @@ export default function RankCard(props: {
                                     >
                                         Giriş Yap
                                     </Button>
+                                : undefined
                 }
             >
-                <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2 p-4">
+                <div className="flex flex-col gap-4 pt-4">
+                    {props.privileges && props.privileges.groups && (
+                        <div className="flex flex-col gap-4 mb-4 px-4">
+                            {props.privileges.groups.map((group, groupIndex) => (
+                                <div key={groupIndex} className='flex flex-col gap-3'>
+                                    <h4 className='text-lg font-semibold text-zinc-300'>
+                                        {group.title}
+                                    </h4>
+                                    <div className='flex flex-col gap-2'>
+                                        {group.privileges.map((privilege, privIndex) => (
+                                            <div key={privIndex} className='flex items-center gap-2'>
+                                                <span className='material-symbols-rounded text-zinc-400 text-xl'>
+                                                    {privilege.icon_id}
+                                                </span>
+                                                <span className='text-zinc-200'>
+                                                    {privilege.text}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <div className="flex flex-col gap-2 px-4 pb-0">
                         {
                             alreadyHasARank ?
                                 <div className="text-zinc-200 rounded-lg max-w-[28rem] text-center text-lg">
@@ -180,42 +253,147 @@ export default function RankCard(props: {
                                             {errorMessage}
                                         </div>
                                         :
-                                        props.user ? <p className="text-lg text-zinc-200 max-w-[28rem] text-center">
-                                            Bu rütbeyi <span className="text-yellow-400 font-semibold inline-block">
-                                                <span>
-                                                    {new Intl.NumberFormat().format(price).replaceAll(",", ".")}
-                                                </span>
-                                                <span className="inline-block w-6 h-6 top-1 relative">
-                                                    {lottie2}
-                                                </span>
-                                            </span> karşılığında satın almayı
-                                            onaylıyor musunuz?
-                                        </p>
+                                        props.user ? 
+                                        <div className="flex flex-col gap-3 items-center">
+                                            <p className="text-base text-zinc-200 text-center">
+                                                Bir ödeme yöntemi seçin:
+                                            </p>
+
+                                            {/* İki sütunlu buton layout */}
+                                            <div className="grid grid-cols-2 gap-3 w-full">
+                                                {/* Bakiye ile satın alma */}
+                                                <div className="flex flex-col">
+                                                    <Button
+                                                        type="button"
+                                                        onClick={async () => {
+                                                            if (purchasing) return;
+                                                            setPurchasing('balance');
+                                                            const response = await fetch("/api/store/purchase/rank/" + Util.slugify(props.credit_market_id), {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type": "application/json"
+                                                                },
+                                                                body: JSON.stringify({})
+                                                            });
+
+                                                            if (response.status === 200) {
+                                                                setSuccessMessage("Satın alma işlemi başarılı!");
+                                                                setPurchasing(null);
+                                                            } else {
+                                                                const data = await response.json();
+                                                                // Bakiye yetersiz ise butonda göster
+                                                                if (data.name && data.name.includes("yetersiz")) {
+                                                                    setBalanceError(true);
+                                                                    setPurchasing(null);
+                                                                    // 2 saniye sonra normal haline döndür
+                                                                    setTimeout(() => {
+                                                                        setBalanceError(false);
+                                                                    }, 2000);
+                                                                } else {
+                                                                    setErrorMessage(data.name);
+                                                                    setPurchasing(null);
+                                                                }
+                                                            }
+                                                        }}
+                                                        className={`w-full py-3 px-4 flex items-center justify-between rounded-lg transition-all h-[52px] ${
+                                                            balanceError 
+                                                                ? 'bg-red-500 hover:bg-red-500 cursor-not-allowed' 
+                                                                : 'bg-gray-600 hover:bg-gray-500'
+                                                        }`}
+                                                        disabled={purchasing === 'balance' || balanceError}
+                                                    >
+                                                        {purchasing === 'balance' ? (
+                                                            <span className="w-full text-center text-sm">İşleniyor...</span>
+                                                        ) : balanceError ? (
+                                                            <span className="w-full text-center text-sm font-semibold">Bakiye Yetersiz!</span>
+                                                        ) : (
+                                                            <>
+                                                                <span className="text-sm font-semibold">Bakiye</span>
+                                                                <div className="flex items-center gap-1">
+                                                                    <span className="text-lg font-bold">
+                                                                        {new Intl.NumberFormat().format(price).replaceAll(",", ".")}
+                                                                    </span>
+                                                                    <span className="inline-block w-7 h-7">
+                                                                        {lottie2}
+                                                                    </span>
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
+
+                                                {/* Kart ile satın alma (Stripe) */}
+                                                <div className="flex flex-col">
+                                                    <Button
+                                                        type="button"
+                                                        onClick={async () => {
+                                                            if (purchasing) return;
+                                                            setPurchasing('card');
+                                                            // Stripe Checkout Session oluştur
+                                                            const response = await fetch("/api/payment/create-checkout", {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type": "application/json"
+                                                                },
+                                                                body: JSON.stringify({
+                                                                    rank_id: props.credit_market_id,
+                                                                    price_try: priceInTRY
+                                                                })
+                                                            });
+
+                                                            if (response.ok) {
+                                                                const { url } = await response.json();
+                                                                window.location.href = url;
+                                                            } else {
+                                                                setErrorMessage("Ödeme sayfası oluşturulamadı");
+                                                                setPurchasing(null);
+                                                            }
+                                                        }}
+                                                        className="bg-green-500 hover:bg-green-400 w-full py-3 px-4 flex items-center justify-between rounded-lg transition-all h-[52px]"
+                                                        disabled={purchasing === 'card'}
+                                                    >
+                                                        {purchasing === 'card' ? (
+                                                            <span className="w-full text-center text-sm">Yönlendir...</span>
+                                                        ) : (
+                                                            <>
+                                                                <span className="text-sm font-semibold">Kart</span>
+                                                                <span className="text-lg font-bold">
+                                                                    {new Intl.NumberFormat().format(priceInTRY).replaceAll(",", ".")}₺
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {/* Önemli Uyarı - Butonların altında */}
+                                            <div className="bg-amber-900/30 border border-amber-600/50 rounded-lg p-2 w-full mb-0">
+                                                <div className="flex gap-2 items-start">
+                                                    <span className="material-symbols-rounded text-amber-400 text-base flex-shrink-0">
+                                                        warning
+                                                    </span>
+                                                    <p className="text-zinc-200 text-xs leading-tight">
+                                                        <strong className="text-amber-300">{props.user?.email}</strong> emailinizi kullanarak ödeme yapmalısınız. Farklı email kullanırsanız rank hesabınıza tanımlanamaz.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                             : <p className="text-lg text-zinc-200 max-w-[28rem] text-center">
                                                 Bu rütbeyi satın alabilmek için giriş yapmalısınız.
                                             </p>}
                     </div>
                 </div>
             </PopUp>
-            <div className='flex-[1_0_0%] min-w-[525px] p-6 rounded-lg shadow-lg 
-        bg-dark-950 flex gap-6 items-center relative md:flex-col md:min-w-56' data-aos="zoom-in"
-                onMouseEnter={
-                    () => {
-                        const lottiePlayer = coinRef.current as any;
-                        lottiePlayer?.play();
-
-                        const icon = document.getElementById(iconId);
-                        icon?.classList.add("animate__flip", "animate__animated");
-                    }
-                } onMouseLeave={
-                    () => {
-                        const lottiePlayer = coinRef.current as any;
-                        lottiePlayer?.pause();
-
-                        const icon = document.getElementById(iconId);
-                        icon?.classList.remove("animate__flip", "animate__animated");
-                    }
-                }>
+            <div
+        className={`p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300
+        bg-gradient-to-br from-dark-800 to-dark-900
+        border-2 border-transparent
+        ${currentRankColor.border} ${currentRankColor.shadow} hover:scale-105
+        flex gap-6 items-center relative md:flex-col`}
+        data-aos="zoom-in"
+        onMouseEnter={handleCardMouseEnter}
+        onMouseLeave={handleCardMouseLeave}
+        onClick={() => setShowPopup(true)}>
                 <div>
                     <Image
                         className="animate__delay-0.5s"
@@ -228,25 +406,35 @@ export default function RankCard(props: {
                         blurDataURL={props.icon.replace("/uploads/", "/uploads/thumbnail_")}
                     />
                 </div>
-                <div className="md:flex md:flex-col md:items-center">
+                <div className="flex-1 md:flex md:flex-col md:items-center">
                     <h2 className='text-2xl font-semibold mb-2 uppercase md:text-center'>
                         {props.title}
                     </h2>
                     <div className="md:flex md:flex-col md:items-center">
                         {discount &&
-                            <div>
-                                <span className='text-zinc-400 text-xl strike w-fit md:text-center'
-                                >{new Intl.NumberFormat().format(_price).replaceAll(",", ".")}</span>
+                            <div className="flex items-center gap-2">
+                                <span className='text-zinc-400 text-xl line-through'>{new Intl.NumberFormat().format(_price).replaceAll(",", ".")}</span>
+                                <span className='text-zinc-400 text-sm'>/ {new Intl.NumberFormat().format(_priceInTRY).replaceAll(",", ".")}₺</span>
                             </div>
                         }
-                        <div className="flex items-center gap-1 w-full md:justify-center">
-                            <h3 className='text-2xl font-semibold text-yellow-400'>
-                                {new Intl.NumberFormat().format(
-                                    price
-                                ).replaceAll(",", ".")}
-                            </h3>
-                            <div className='w-6 h-6'>
-                                {lottie}
+                        <div className="flex items-center gap-3">
+                            {/* Bakiye fiyatı */}
+                            <div className="flex items-center gap-1">
+                                <h3 className='text-2xl font-semibold text-green-400'>
+                                    {new Intl.NumberFormat().format(price).replaceAll(",", ".")}
+                                </h3>
+                                <div className='w-9 h-9'>
+                                    {lottie}
+                                </div>
+                            </div>
+                            
+                            {/* TL fiyatı */}
+                            <span className="text-zinc-400 text-xl">/</span>
+                            <div className="flex items-center gap-1">
+                                <h3 className={`text-2xl font-semibold ${currentRankColor.text}`}>
+                                    {new Intl.NumberFormat().format(priceInTRY).replaceAll(",", ".")}
+                                </h3>
+                                <span className={`text-xl ${currentRankColor.text}`}>₺</span>
                             </div>
                         </div>
                         {
@@ -275,8 +463,12 @@ export default function RankCard(props: {
                             }
                             setShowPopup(true);
                         }}
-                        className="mt-4 bg-blue-500 hover:bg-blue-400 w-fit absolute right-6 bottom-6 md:relative md:right-0 md:bottom-0">
-                        Satın Al
+                        className={`mt-4 ${props.credit_market_id === 'cirak' ? 'bg-gray-500 hover:bg-gray-400' : 
+                                          props.credit_market_id === 'asil' ? 'bg-orange-500 hover:bg-orange-400' :
+                                          props.credit_market_id === 'soylu' ? 'bg-yellow-500 hover:bg-yellow-400' :
+                                          props.credit_market_id === 'senyor' ? 'bg-purple-500 hover:bg-purple-400' :
+                                          'bg-green-500 hover:bg-green-400'} w-fit md:w-full`}>
+                        Özellikleri Gör
                     </Button>
                 </div>
             </div>

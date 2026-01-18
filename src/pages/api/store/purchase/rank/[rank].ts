@@ -5,7 +5,8 @@ import ActionManager from "@/lib/server/database/mongo/ActionManager";
 import ConsoleManager from "@/lib/server/logs/ConsoleManager";
 import StoreHistoryManager from "@/lib/server/logs/StoreHistoryManager";
 import WebhookManager from "@/lib/server/logs/WebhookManager";
-import RankManager from "@/lib/server/store/RanksManager";
+import RankManager from "@/lib/server/ranks/RankManager";
+import RanksManager from "@/lib/server/store/RanksManager";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -39,7 +40,7 @@ export default async function PurchaseHandler(req: NextApiRequest, res: NextApiR
         return res.status(400).json({ name: "Missing fields" });
     }
 
-    const rank = RankManager.getInstance().getRankByCreditMarketId(rankCreditMarketId);
+    const rank = RanksManager.getInstance().getRankByCreditMarketId(rankCreditMarketId);
     if (!rank) {
         return res.status(400).json({ name: "Invalid rank" });
     }
@@ -54,6 +55,17 @@ export default async function PurchaseHandler(req: NextApiRequest, res: NextApiR
 
     const oldCredit = user.player.credit;
     await PlayerManager.getInstance().setCredit(user.player.name, oldCredit - rank.attributes.price);
+
+    // Direkt LuckPerms database'ine rütbeyi yaz
+    try {
+        await RankManager.getInstance().setPlayerRank(user.player.uuid, rankCreditMarketId);
+        ConsoleManager.info("Purchase", `Rank set directly in LuckPerms for ${user.player.name}: ${rankCreditMarketId}`);
+    } catch (error: any) {
+        ConsoleManager.error("Purchase", `Failed to set rank in LuckPerms: ${error.message}`);
+        // Bakiyeyi geri ver
+        await PlayerManager.getInstance().setCredit(user.player.name, oldCredit);
+        return res.status(500).json({ name: "Rütbe atanamadı. Bakiyeniz iade edildi." });
+    }
 
     await ActionManager.getInstance().sendAction(
         {

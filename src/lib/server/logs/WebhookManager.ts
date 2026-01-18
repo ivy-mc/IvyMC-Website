@@ -44,6 +44,22 @@ export default class WebhookManager {
         global.pendingWebhooks.push(webhook);
     }
 
+    static sendEmbedWebhook(title: string, description: string, color: number = 0x00FF00) {
+        const webhook = new Webhook("https://discord.com/api/webhooks/1278432332109320242/zm0jdN1SZHUBBCMsq7idnZKnRXpGk7neo6AenO-ys0OYPixmhu6lQ2gHXu3GITZXg9JS");
+        const embed = new Embed()
+            .setTitle(title)
+            .setDescription(description)
+            .setColor(color.toString(16).padStart(6, '0'))
+            .addField({
+                name: "Tarih",
+                value: "<t:" + Math.floor(Date.now() / 1000) + ":F>",
+                inline: false
+            });
+
+        webhook.addEmbed(embed);
+        global.pendingWebhooks.push(webhook);
+    }
+
     static sendLoginWebhook(user: User, ip: string) {
         const webhook = new Webhook(
             "https://discord.com/api/webhooks/1278436335631470652/MfMVMN3LMyETTMYe5DvR5kF4N7b8a2wlgQiFH9XTL-8JgKFPLle6a4a0sr1vLysU7QTZ"

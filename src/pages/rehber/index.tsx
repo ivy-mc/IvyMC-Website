@@ -12,7 +12,7 @@ type GuidesProps = InferGetServerSidePropsType<typeof getServerSideProps> & Page
 GuidesPage.getLayout = function getLayout(page: React.ReactNode, pageProps: PageProps) {
     return (
         <Layout
-            title="OrleansMC - Rehber"
+            title="IvyMC - Rehber"
             description="Minecraft sunucumuz hakkında bilgi alabileceğiniz rehber sayfası."
             ogDescription="Minecraft sunucumuz hakkında bilgi alabileceğiniz rehber sayfası."
             user={pageProps.user}
@@ -28,14 +28,13 @@ export default function GuidesPage({ guides, user }: GuidesProps) {
             <div className='mt-28'>
                 <div
                     data-aos="fade-down"
-                    className='flex flex-col relative p-16 md:p-12 rounded-lg before:rounded-lg shadow-lg 
-                    bg-[url("/uploads/sun_risepng_b3c86a759f.png")] bg-cover bg-center bg-no-repeat 
-                    before:absolute before:top-0 before:left-0 before:w-full before:h-full 
-                    before:bg-gradient-to-r 
-                    before:from-purple-900/50 before:via-indigo-800/80 before:to-purple-800/50 
-                    before:z-10'>
-                    <h1 className='text-4xl font-semibold text-center z-20'>OrleansMC Rehberler</h1>
-                    <p className='text-center text-xl mt-4 z-20'>Minecraft sunucumuz hakkında bilgi alabileceğiniz rehber sayfası.</p>
+                    className='flex flex-col relative p-16 md:p-12 rounded-lg shadow-lg bg-cover bg-center bg-no-repeat overflow-hidden'
+                    style={{
+                        backgroundImage: 'url(https://res.cloudinary.com/dkcpwrjza/image/upload/v1768634649/rehber_bg_6b108cadc4.png)'
+                    }}>
+                    <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
+                    <h1 className='text-4xl font-semibold text-center z-20 relative'>IvyMC Rehberler</h1>
+                    <p className='text-center text-xl mt-4 z-20 relative'>Minecraft sunucumuz hakkında bilgi alabileceğiniz rehber sayfası.</p>
                 </div>
 
                 <div data-aos="fade-up"

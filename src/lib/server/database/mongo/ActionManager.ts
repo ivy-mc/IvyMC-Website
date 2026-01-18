@@ -1,5 +1,6 @@
 import { Collection } from "mongodb";
 import MongoManager from "./MongoManager";
+import ConsoleManager from "../../logs/ConsoleManager";
 
 declare global {
     var actionManager: ActionManager;
@@ -11,6 +12,9 @@ export type Action = {
     command: string;
     server_type: "REALMS" | "REALMS_SPAWN" | "REALMS_OUTLAND" | null;
     date: Date;
+    executed?: boolean;
+    executed_at?: Date;
+    error?: string;
 }
 
 export default class ActionManager {
@@ -18,6 +22,7 @@ export default class ActionManager {
 
     private constructor() {
         this.collection = MongoManager.getInstance().minecraftDatabase.collection<Action>("pending_actions");
+        ConsoleManager.info('ActionManager', 'ActionManager initialized - commands will be stored in MongoDB');
     }
 
     public static getInstance(): ActionManager {
@@ -29,6 +34,10 @@ export default class ActionManager {
     }
 
     public async sendAction(action: Action) {
-        await this.collection.insertOne(action);
+        // MongoDB'ye kaydet (log/history amaçlı)
+        await this.collection.insertOne({
+            ...action,
+            executed: false
+        });
     }
 }

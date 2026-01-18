@@ -38,7 +38,7 @@ export default function Section(props: SectionProps) {
                 </p>
                 {
                     props.buttonText && props.buttonUrl &&
-                    <Button type="link" href={props.buttonUrl} className="bg-blue-500 hover:bg-blue-400 mt-8 py-3 w-fit">
+                    <Button type="link" href={props.buttonUrl} className="bg-green-500 hover:bg-green-400 mt-8 py-3 w-fit">
                         {props.buttonText}
                     </Button>
                 }

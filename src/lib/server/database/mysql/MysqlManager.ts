@@ -46,4 +46,17 @@ export default class MysqlManager {
 
         ConsoleManager.info('MysqlManager', `Changed password for user ${username}`);
     }
+
+    public async changeUsername(oldUsername: string, newUsername: string): Promise<void> {
+        await AuthModel.update({
+            NICKNAME: newUsername,
+            LOWERCASENICKNAME: newUsername.toLowerCase()
+        }, {
+            where: {
+                NICKNAME: oldUsername
+            }
+        });
+
+        ConsoleManager.info('MysqlManager', `Changed username from ${oldUsername} to ${newUsername}`);
+    }
 }

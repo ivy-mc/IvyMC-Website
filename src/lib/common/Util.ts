@@ -23,6 +23,20 @@ export default class Util {
         )}, ${new Date(date).getFullYear()}`
     }
 
+    public static getStrapiMedia(url: string | null) {
+        if (url == null) {
+            return null;
+        }
+
+        // URL http veya https ile başlıyorsa (Cloudinary gibi) olduğu gibi döndür
+        if (url.startsWith("http") || url.startsWith("//")) {
+            return url;
+        }
+
+        // Aksi halde API URL'ini başına ekle
+        return `${process.env.NEXT_PUBLIC_STRAPI_API_URL || process.env.STRAPI_URL || "http://localhost:1337"}${url}`;
+    }
+
     public static cleanMarkdown(text: string) {
         if (!text) return '';
         // Başlıkları kaldır (örn. ## Başlık)
@@ -190,17 +204,17 @@ export default class Util {
     public static getRankDisplayName(rank: string) {
         let rankDisplayName;
         switch (rank) {
-            case "legend":
-                rankDisplayName = "Efsane";
+            case "senyor":
+                rankDisplayName = "Senyor";
                 break;
-            case "yuce":
-                rankDisplayName = "Yüce";
+            case "soylu":
+                rankDisplayName = "Soylu";
                 break;
-            case "titan":
-                rankDisplayName = "Titan";
+            case "asil":
+                rankDisplayName = "Asil";
                 break;
-            case "legend":
-                rankDisplayName = "Efsane";
+            case "cirak":
+                rankDisplayName = "Çırak";
                 break;
             default:
                 rankDisplayName = "Oyuncu";
@@ -212,17 +226,17 @@ export default class Util {
     static getRankColor(rank: string) {
         let rankColor;
         switch (rank) {
-            case "legend":
-                rankColor = "#8A6ADA";
+            case "senyor":
+                rankColor = "#a855f7"; // mor
                 break;
-            case "yuce":
-                rankColor = "#da7fdb";
+            case "soylu":
+                rankColor = "#eab308"; // sarı
                 break;
-            case "titan":
-                rankColor = "#d4a935";
+            case "asil":
+                rankColor = "#f97316"; // turuncu
                 break;
-            case "lord":
-                rankColor = "#4A69D9";
+            case "cirak":
+                rankColor = "#6b7280"; // gri
                 break;
             default:
                 rankColor = "#949aa6";

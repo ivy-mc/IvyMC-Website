@@ -7,15 +7,16 @@ import "@/styles/blog.module.scss"
 import Layout from '@/layouts/Layout'
 import StoreHistoryManager, { StoreHistory } from '@/lib/server/logs/StoreHistoryManager'
 import Util from '@/lib/common/Util'
+import PurchasesSupportAlert from '@/components/profile/PurchasesSupportAlert'
 
 PurchasesPage.getLayout = function getLayout(page: React.ReactNode, pageProps: any) {
     return (
         <Layout
             profile
             user={pageProps.user}
-            title="OrleansMC - Profil"
-            description="OrleansMC sunucusundaki profilinizi yönetin."
-            ogDescription="OrleansMC sunucusundaki profilinizi yönetin."
+            title="IvyMC - Profil"
+            description="IvyMC sunucusundaki profilinizi yönetin."
+            ogDescription="IvyMC sunucusundaki profilinizi yönetin."
         >
             {page}
         </Layout>
@@ -35,9 +36,10 @@ export default function PurchasesPage({ user, marketHistory }: PurchasesPageProp
         id="upgrade_crown"
         speed={1}
         loop={true}
-        hover={false}
         mode="normal"
-        src="/uploads/coins_75c0679ecf.json"
+        autoplay={true}
+        style={{ pointerEvents: 'none' }}
+        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
     />
 
     return (
@@ -54,6 +56,12 @@ export default function PurchasesPage({ user, marketHistory }: PurchasesPageProp
             <p className='text-zinc-300 mt-2'>
                 Buradan satın alımlarınızı görebilirsiniz.
             </p>
+
+            {/* Pending Membership Uyarısı */}
+            <div className='mt-6'>
+                <PurchasesSupportAlert userEmail={user.email} />
+            </div>
+
             <div className='mt-6'>
                 <div className='blog !m-0 !p-0'>
                     {

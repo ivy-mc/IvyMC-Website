@@ -8,9 +8,9 @@ import styles from "@/styles/blog.module.scss";
 PrivacyPolicy.getLayout = function getLayout(page: React.ReactNode, pageProps: PageProps) {
     return (
         <Layout
-            title="OrleansMC - Gizlilik Politikası"
-            description="OrleansMC Gizlilik Politikası"
-            ogDescription="OrleansMC Gizlilik Politikası"
+            title="IvyMC - Gizlilik Politikası"
+            description="IvyMC Gizlilik Politikası"
+            ogDescription="IvyMC Gizlilik Politikası"
             user={pageProps.user}
         >
             {page}
@@ -29,8 +29,8 @@ export default function PrivacyPolicy(props: PageProps) {
                     before:absolute before:top-0 before:left-0 before:w-full before:h-full 
                     before:bg-gradient-to-r before:from-purple-900/80 before:to-indigo-800/80 
                     before:z-10'>
-                    <h1 className='text-4xl font-semibold text-center z-20'>OrleansMC Gizlilik Politikası</h1>
-                    <p className='text-center text-xl mt-4 z-20'>OrleansMC Gizlilik Politikası</p>
+                    <h1 className='text-4xl font-semibold text-center z-20'>IvyMC Gizlilik Politikası</h1>
+                    <p className='text-center text-xl mt-4 z-20'>IvyMC Gizlilik Politikası</p>
                 </div>
             </div>
             <div className={styles.blog} data-aos="fade-up">
@@ -40,7 +40,7 @@ export default function PrivacyPolicy(props: PageProps) {
                     Güvenliğiniz bizim için önemli. Bu sebeple bizimle paylaşacağınız kişisel verileriz hassasiyetle korunmaktadır.
                 </p>
                 <p>
-                    Biz, OrleansMC, veri sorumlusu olarak, bu gizlilik ve kişisel verilerin korunması politikası ile,
+                    Biz, IvyMC, veri sorumlusu olarak, bu gizlilik ve kişisel verilerin korunması politikası ile,
                     hangi kişisel verilerinizin hangi amaçla işleneceği, işlenen verilerin kimlerle ve neden paylaşılabileceği,
                     veri işleme yöntemimiz ve hukuki sebeplerimiz ile; işlenen verilerinize ilişkin haklarınızın neler
                     olduğu hususunda sizleri aydınlatmayı amaçlıyoruz.
@@ -89,14 +89,14 @@ export default function PrivacyPolicy(props: PageProps) {
                     <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle kişinin kendisi aleyhine bir sonucun ortaya çıkmasına itiraz etme,</li>
                     <li>Kişisel verilerin kanuna aykırı olarak işlenmesi sebebiyle zarara uğraması hâlinde zararın giderilmesini talep etme, haklarına sahiptir.</li>
                 </ol>
-                <p>Yukarıda sayılan haklarınızı kullanmak üzere iletisim@orleansmc.com üzerinden bizimle iletişime geçebilirsiniz.</p>
+                <p>Yukarıda sayılan haklarınızı kullanmak üzere iletisim@ivymc.com üzerinden bizimle iletişime geçebilirsiniz.</p>
                 <h2>İletişim</h2>
                 <p>
                     Sizlere talepleriniz doğrultusunda hizmet sunabilmek amacıyla, sadece gerekli olan kişisel verilerinizin,
                     işbu gizlilik ve kişisel verilerin işlenmesi politikası uyarınca işlenmesini,
                     kabul edip etmemek hususunda tamamen özgürsünüz. Siteyi kullanmaya devam ettiğiniz
                     takdirde kabul etmiş olduğunuz tarafımızca varsayılacak olup, daha ayrıntılı bilgi
-                    için bizimle iletisim@orleansmc.com e-mail adresi üzerinden iletişime geçmekten lütfen çekinmeyiniz.
+                    için bizimle iletisim@ivymc.com e-mail adresi üzerinden iletişime geçmekten lütfen çekinmeyiniz.
                 </p>
             </div>
         </>

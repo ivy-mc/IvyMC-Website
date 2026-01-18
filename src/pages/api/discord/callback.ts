@@ -11,6 +11,19 @@ export const config = {
     },
 };
 
+// Discord rol ID'lerini rütbeye göre döndürür
+function getDiscordRoleIdByRank(rank: string): string | null {
+    const roleMap: Record<string, string> = {
+        "oyuncu": process.env.DISCORD_ROLE_OYUNCU || "",
+        "cirak": process.env.DISCORD_ROLE_CIRAK || "",
+        "asil": process.env.DISCORD_ROLE_ASIL || "",
+        "soylu": process.env.DISCORD_ROLE_SOYLU || "",
+        "senyor": process.env.DISCORD_ROLE_SENYOR || ""
+    };
+
+    return roleMap[rank] || null;
+}
+
 export default async function DiscordCallback(req: NextApiRequest, res: NextApiResponse) {
     const code = req.query.code as string;
     if (!code) {
@@ -71,20 +84,27 @@ export default async function DiscordCallback(req: NextApiRequest, res: NextApiR
             }
         );
 
+        // Kullanıcının rütbesine göre Discord rolü ata
+        const playerRankForRole = user.player.rank === "player" ? "oyuncu" : user.player.rank;
+        const roleId = getDiscordRoleIdByRank(playerRankForRole);
+        
+        if (roleId) {
+            await discordOauth2Manager.assignRole("1168183765441458306", discordUser.id, roleId);
+        } else {
+            ConsoleManager.warn("DiscordCallback", `No role mapping found for rank: ${playerRankForRole}`);
+        }
+
         const oldMetaDatas = await getMetadata(account.access_token);
         const newMetaData = {
             oyuncu: 1,
-            lord: 0,
-            titan: 0,
-            yuce: 0,
-            legend: 0
+            cirak: 0,
+            asil: 0,
+            soylu: 0,
+            senyor: 0
         };
-        let playerRank = user.player.rank;
-        if (playerRank === "player") {
-            playerRank = "oyuncu";
-        }
+        let playerRank: keyof typeof newMetaData = user.player.rank === "player" ? "oyuncu" : user.player.rank as keyof typeof newMetaData;
         
-        if (!newMetaData[playerRank]) {
+        if (newMetaData[playerRank] !== undefined) {
             newMetaData[playerRank] = 1;
         }
 
