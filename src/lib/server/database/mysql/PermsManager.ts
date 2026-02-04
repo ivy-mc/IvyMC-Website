@@ -13,18 +13,19 @@ declare global {
     var userPermissionsMap: Map<string, string[]>;
 }
 
+const PERMISSIONS_PATH = path.join(process.cwd(), 'src/lib/server/database/mysql/permissions.json');
+
 export default class PermsManager {
     constructor() {
         ConsoleManager.info('PermsManager', 'PermsManager initialized');
         if (!global.userPermissionsMap) {
             global.userPermissionsMap = new Map();
-            const permissionsPath = path.join(process.cwd(), 'src/lib/server/database/mysql/permissions.json');
-            if (!fs.existsSync(permissionsPath)) {
-                fs.writeFileSync(permissionsPath, '[]');
+            if (!fs.existsSync(PERMISSIONS_PATH)) {
+                fs.writeFileSync(PERMISSIONS_PATH, '[]');
             }
 
             const jsonArray = JSON.parse(
-                fs.readFileSync(permissionsPath, { encoding: 'utf-8' })
+                fs.readFileSync(PERMISSIONS_PATH, { encoding: 'utf-8' })
             )
 
             jsonArray.forEach((json: any) => {
@@ -127,7 +128,7 @@ export default class PermsManager {
             userPermissionsMap.forEach((permissions, uuid) => {
                 jsonArray.push({ uuid, permissions });
             });
-            fs.writeFileSync(path.join(process.cwd(), 'src/lib/server/database/mysql/permissions.json'), JSON.stringify(jsonArray, null, 2));
+            fs.writeFileSync(PERMISSIONS_PATH, JSON.stringify(jsonArray, null, 2));
         } catch (error) {
             console.error('Hata:', error);
         }
