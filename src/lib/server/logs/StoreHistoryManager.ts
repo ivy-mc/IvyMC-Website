@@ -35,6 +35,8 @@ export default class StoreHistoryManager {
     }
 
     public async addHistory(playerName: string, name: string, amount: number, price: number, item: string) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.collection.updateOne(
             { _id: playerName.toLowerCase() },
             {
@@ -46,6 +48,8 @@ export default class StoreHistoryManager {
     }
 
     public async getHistory(playerName: string) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.collection.findOne({ _id: playerName.toLowerCase() });
     }
 }

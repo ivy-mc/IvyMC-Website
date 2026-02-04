@@ -47,6 +47,8 @@ export default class PlayerManager {
     }
 
     public async getPlayerByUUID(uuid: string) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         const player = await this.collection.findOne({ uuid: uuid });
         const redis = RedisManager.getInstance();
         const amounts = await Promise.all([

@@ -62,6 +62,8 @@ export default class DiscordOauth2Manager {
         try {
             const _id = playerName.toLowerCase();
 
+            // Ensure MongoDB connection is active
+            await MongoManager.getInstance().ensureConnected();
             const user = await this.users.findOne<DiscordUser>({ _id });
 
             if (!user) {
@@ -102,11 +104,16 @@ export default class DiscordOauth2Manager {
     }
 
     public async updateUser(user: DiscordUser) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.users.updateOne({ _id: user._id }, { $set: user }, { upsert: true });
     }
 
     public async getAccount(playerName: string) {
         const _id = playerName.toLocaleLowerCase();
+        
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         const account = await this.accounts.findOne<DiscordAccount>({ _id: _id });
 
         if (!account) {
@@ -136,6 +143,8 @@ export default class DiscordOauth2Manager {
     }
 
     public async updateAccount(account: DiscordAccount) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.accounts.updateOne({ _id: account._id }, { $set: account }, { upsert: true });
     }
 
