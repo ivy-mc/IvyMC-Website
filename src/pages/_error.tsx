@@ -6,22 +6,30 @@ interface ErrorPageProps {
 
 function Error({ statusCode }: ErrorPageProps) {
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh', 
-      flexDirection: 'column', 
-      textAlign: 'center',
-      padding: '20px'
-    }}>
-      <h1>{statusCode || 'Bir Hata Oluştu'}</h1>
-      <p>
-        {statusCode
-          ? `Sunucu tarafında ${statusCode} hatası oluştu.`
-          : "İstemci tarafında bir hata oluştu."}
-      </p>
-    </div>
+    <html>
+      <head>
+        <title>Hata</title>
+      </head>
+      <body style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh', 
+        flexDirection: 'column', 
+        textAlign: 'center',
+        padding: '20px',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      }}>
+        <h1>{statusCode || 'Bir Hata Oluştu'}</h1>
+        <p>
+          {statusCode === 404
+            ? "Sayfa bulunamadı"
+            : statusCode
+            ? `Sunucu tarafında ${statusCode} hatası oluştu.`
+            : "İstemci tarafında bir hata oluştu."}
+        </p>
+      </body>
+    </html>
   );
 }
 
