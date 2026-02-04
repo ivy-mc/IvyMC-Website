@@ -6,11 +6,15 @@ declare global {
     var pendingMetadatasInterval: NodeJS.Timeout;
 }
 
+// Check if running in serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 if (!global.pendingMetadatas) {
     global.pendingMetadatas = [];
 }
 
-if (!global.pendingMetadatasInterval) {
+// Only set up interval in non-serverless environments
+if (!global.pendingMetadatasInterval && !isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
     global.pendingMetadatasInterval = setInterval(async () => {
         if (global.pendingMetadatas.length > 0) {
             const metadata = global.pendingMetadatas.pop();

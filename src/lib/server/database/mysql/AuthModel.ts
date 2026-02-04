@@ -1,6 +1,17 @@
 import { DataTypes, Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize(process.env.MYSQL_AUTH_URI!, {})
+// Serverless-friendly configuration with connection pooling
+const sequelize = new Sequelize(process.env.MYSQL_AUTH_URI!, {
+    pool: {
+        max: 2,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    },
+    dialectOptions: {
+        connectTimeout: 60000
+    }
+})
 
 const Auth = sequelize.define('Auth', {
     NICKNAME: {

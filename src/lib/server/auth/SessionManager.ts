@@ -13,23 +13,29 @@ export type Session = {
     createdAt: Date;
 }
 
+// Check if running in serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 export default class SessionManager {
     private collection: Collection<Session>;
 
     private constructor() {
         this.collection = MongoManager.getInstance().websiteDatabase.collection<Session>('sessions');
 
-        setInterval(async () => {
-            const sessions = await this.collection.find({
-                createdAt: {
-                    $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
-                }
-            }).toArray();
+        // Only set up cleanup interval in non-serverless environments
+        if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
+            setInterval(async () => {
+                const sessions = await this.collection.find({
+                    createdAt: {
+                        $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
+                    }
+                }).toArray();
 
-            for (const session of sessions) {
-                await this.collection.deleteOne({ token: session.token });
-            }
-        }, 1000 * 60);
+                for (const session of sessions) {
+                    await this.collection.deleteOne({ token: session.token });
+                }
+            }, 1000 * 60);
+        }
     }
 
     public static getInstance(): SessionManager {

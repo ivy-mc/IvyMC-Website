@@ -1,7 +1,17 @@
 import { DataTypes, Sequelize } from 'sequelize';
 
+// Serverless-friendly configuration with connection pooling
 const sequelize = new Sequelize(process.env.MYSQL_LUCPKERMS_URI!, {
-    logging: false
+    logging: false,
+    pool: {
+        max: 2,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    },
+    dialectOptions: {
+        connectTimeout: 60000
+    }
 })
 
 const LuckPermsUserPermissions = sequelize.define('LuckPermsUserPermissions', {

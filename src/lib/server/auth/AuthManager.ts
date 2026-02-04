@@ -22,6 +22,9 @@ declare global {
     var pendingEmailChanges: Map<string, PendingEmailChange>;
 }
 
+// Check if running in serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 type UserCommon = {
     _id: string;
     email: string;
@@ -78,17 +81,20 @@ export default class AuthManager {
             global.pendingEmailChanges = new Map();
         }
 
-        setInterval(async () => {
-            const resetPasswordRequests = await this.resetPasswordRequests.find({
-                created_at: {
-                    $lt: new Date(Date.now() - 1000 * 60 * 5)
-                }
-            }).toArray();
+        // Only set up cleanup interval in non-serverless environments
+        if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
+            setInterval(async () => {
+                const resetPasswordRequests = await this.resetPasswordRequests.find({
+                    created_at: {
+                        $lt: new Date(Date.now() - 1000 * 60 * 5)
+                    }
+                }).toArray();
 
-            for (const resetPasswordRequest of resetPasswordRequests) {
-                await this.resetPasswordRequests.deleteOne({ username: resetPasswordRequest.username });
-            }
-        }, 1000 * 60);
+                for (const resetPasswordRequest of resetPasswordRequests) {
+                    await this.resetPasswordRequests.deleteOne({ username: resetPasswordRequest.username });
+                }
+            }, 1000 * 60);
+        }
     }
 
     public static getInstance(): AuthManager {
