@@ -25,6 +25,9 @@ const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 export default class GuideManager {
     public guides: Guide[] = [];
+    private isFetching: boolean = false;
+    private lastFetchTime: number = 0;
+    private cacheDuration: number = 10000; // 10 seconds cache in serverless
 
 
     private constructor() {
@@ -44,7 +47,25 @@ export default class GuideManager {
         return global.guideManager;
     }
 
+    // Get guides with automatic fetch if empty or stale
+    public async getGuides(): Promise<Guide[]> {
+        const now = Date.now();
+        const shouldRefetch = isServerless && (now - this.lastFetchTime > this.cacheDuration);
+        
+        if ((this.guides.length === 0 || shouldRefetch) && !this.isFetching) {
+            await this.fetchGuides();
+        }
+        
+        return this.guides;
+    }
+
     public async fetchGuides(): Promise<Guide[]> {
+        if (this.isFetching) {
+            // Wait for existing fetch to complete
+            return this.guides;
+        }
+        
+        this.isFetching = true;
         try {
             const result = await axios.get(process.env.STRAPI_URL + "/api/guides?populate=*",
                 {
@@ -89,10 +110,13 @@ export default class GuideManager {
             }).sort((a, b) => {
                 return new Date(b.attributes.publishedAt).getTime() - new Date(a.attributes.publishedAt).getTime();
             });
+            this.lastFetchTime = Date.now();
             return this.guides;
         } catch (error) {
             console.error("Error fetching guides", error);
             return [];
+        } finally {
+            this.isFetching = false;
         }
     }
 }

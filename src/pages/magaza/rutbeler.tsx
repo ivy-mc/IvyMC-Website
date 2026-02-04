@@ -113,6 +113,8 @@ export default function RanksPage({ user, ranks }: RanksProps) {
 
 
 export const getServerSideProps = (async (ctx) => {
+    // Ensure ranks are fetched (will use cache or fetch fresh data)
+    await RanksManager.getInstance().getRanks();
     return {
         props: {
             user: await AuthManager.getInstance().getUserFromContext(ctx),

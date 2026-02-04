@@ -23,6 +23,9 @@ const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 export default class BlogManager {
     public blogs: Blog[] = [];
+    private isFetching: boolean = false;
+    private lastFetchTime: number = 0;
+    private cacheDuration: number = 10000; // 10 seconds cache in serverless
 
 
     private constructor() {
@@ -42,7 +45,25 @@ export default class BlogManager {
         return global.blogManager;
     }
 
+    // Get blogs with automatic fetch if empty or stale
+    public async getBlogs(): Promise<Blog[]> {
+        const now = Date.now();
+        const shouldRefetch = isServerless && (now - this.lastFetchTime > this.cacheDuration);
+        
+        if ((this.blogs.length === 0 || shouldRefetch) && !this.isFetching) {
+            await this.fetchBlogs();
+        }
+        
+        return this.blogs;
+    }
+
     public async fetchBlogs(): Promise<Blog[]> {
+        if (this.isFetching) {
+            // Wait for existing fetch to complete
+            return this.blogs;
+        }
+        
+        this.isFetching = true;
         try {
             const result = await axios.get(process.env.STRAPI_URL + "/api/blogs?populate=*",
                 {
@@ -86,10 +107,13 @@ export default class BlogManager {
             }).sort((a, b) => {
                 return new Date(b.attributes.publishedAt).getTime() - new Date(a.attributes.publishedAt).getTime();
             });
+            this.lastFetchTime = Date.now();
             return this.blogs;
         } catch (error) {
             console.error("Error fetching blogs", error);
             return [];
+        } finally {
+            this.isFetching = false;
         }
     }
 }

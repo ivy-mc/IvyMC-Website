@@ -52,9 +52,11 @@ export default function GuidesPage({ guides, user }: GuidesProps) {
 
 
 export const getServerSideProps = (async (ctx) => {
+    // Ensure guides are fetched (will use cache or fetch fresh data)
+    const guides = await GuideManager.getInstance().getGuides();
     return {
         props: {
-            guides: GuideManager.getInstance().guides.map((guide) => {
+            guides: guides.map((guide) => {
                 const newGuide: Guide = {
                     ...guide,
                     attributes: {

@@ -10,17 +10,10 @@ export async function register() {
     if (process.env.NEXT_RUNTIME === 'nodejs') {
         EventEmitter.defaultMaxListeners = 100;
         
-        // In serverless, fetch on-demand; in traditional environments, fetch and cache
-        if (!isServerless) {
-            await BlogManager.getInstance().fetchBlogs();
-            await GuideManager.getInstance().fetchGuides();
-            await RanksManager.getInstance().fetchRanks();
-        } else {
-            // Initialize managers but don't fetch immediately in serverless
-            // Data will be fetched on-demand when needed
-            BlogManager.getInstance();
-            GuideManager.getInstance();
-            RanksManager.getInstance();
-        }
+        // Fetch data in both traditional and serverless environments
+        // In serverless, the interval polling is disabled but initial fetch is needed
+        await BlogManager.getInstance().fetchBlogs();
+        await GuideManager.getInstance().fetchGuides();
+        await RanksManager.getInstance().fetchRanks();
     }
 }
