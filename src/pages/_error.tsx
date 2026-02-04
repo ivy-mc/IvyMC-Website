@@ -1,12 +1,20 @@
-import { NextPage } from "next";
+import { NextPageContext } from "next";
 
-interface ErrorProps {
+interface ErrorPageProps {
   statusCode?: number;
 }
 
-const Error: NextPage<ErrorProps> = ({ statusCode }) => {
+function Error({ statusCode }: ErrorPageProps) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', flexDirection: 'column', textAlign: 'center' }}>
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      minHeight: '100vh', 
+      flexDirection: 'column', 
+      textAlign: 'center',
+      padding: '20px'
+    }}>
       <h1>{statusCode || 'Bir Hata Oluştu'}</h1>
       <p>
         {statusCode
@@ -15,10 +23,10 @@ const Error: NextPage<ErrorProps> = ({ statusCode }) => {
       </p>
     </div>
   );
-};
+}
 
-Error.getInitialProps = ({ res, err }) => {
-  const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
+Error.getInitialProps = ({ res, err }: NextPageContext) => {
+  const statusCode = res?.statusCode || err?.statusCode || 500;
   return { statusCode };
 };
 
