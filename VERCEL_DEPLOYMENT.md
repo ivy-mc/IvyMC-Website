@@ -22,6 +22,9 @@ const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
 - **Traditional pool size**: 10 connections
 - **Connection timeout**: 10 seconds
 - **Socket timeout**: 45 seconds
+- **Automatic reconnection**: Connection health is verified before each operation
+- **Connection state management**: Handles closed connections gracefully with automatic reconnection
+- **Concurrent connection handling**: Multiple simultaneous requests share a single connection attempt
 
 #### Redis
 - **Serverless keep-alive**: 0 (disabled)
@@ -136,6 +139,17 @@ This will enable serverless mode and disable background timers.
 - Set up error tracking (Sentry, etc.)
 
 ## Troubleshooting
+
+### "MongoTopologyClosedError: Topology is closed"
+This error has been fixed in the latest version. The MongoDB connection manager now:
+- Automatically verifies connection health before operations
+- Reconnects automatically if the connection is closed
+- Handles concurrent connection attempts properly
+
+If you still encounter this error:
+- Ensure your MongoDB URI is correct and accessible from Vercel
+- Check that your MongoDB cluster allows connections from Vercel's IP ranges
+- Verify that your MongoDB cluster is not overloaded or unreachable
 
 ### "Too many connections" error
 - Reduce pool size in database configurations
