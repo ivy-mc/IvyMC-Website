@@ -94,6 +94,16 @@ docker build -t orleansmc-web .
 docker run -p 3000:3000 orleansmc-web
 ```
 
+## 🚀 Vercel Serverless Deployment
+
+This project is fully compatible with Vercel's serverless platform! The codebase automatically adapts to serverless environments with optimized database connection pooling and disabled background tasks.
+
+For detailed Vercel deployment instructions, see [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md).
+
+Quick deploy to Vercel:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ivy-mc/IvyMC-Website)
+
 ## 📜 License
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**
