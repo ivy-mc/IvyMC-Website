@@ -74,6 +74,7 @@ export default class MongoManager {
         if (this.connectionPromise) {
             try {
                 await this.connectionPromise;
+                this.connectionPromise = null; // Clear the promise after successful connection
                 return;
             } catch (err) {
                 // Connection failed, try to reconnect
@@ -85,6 +86,7 @@ export default class MongoManager {
         ConsoleManager.debug('Mongo Manager', 'Reconnecting to MongoDB');
         this.connectionPromise = this.connect();
         await this.connectionPromise;
+        this.connectionPromise = null; // Clear the promise after successful connection
     }
 
     public static getInstance(): MongoManager {
