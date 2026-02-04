@@ -2,6 +2,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 // Serverless-friendly configuration with connection pooling
 const sequelize = new Sequelize(process.env.MYSQL_AUTH_URI!, {
+    dialect: 'mysql',
     pool: {
         max: 2,
         min: 0,
