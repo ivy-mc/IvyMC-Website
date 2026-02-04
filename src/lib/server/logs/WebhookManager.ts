@@ -7,11 +7,15 @@ declare global {
     var pendingWebhooksInterval: NodeJS.Timeout;
 }
 
+// Check if running in serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 if (!global.pendingWebhooks) {
     global.pendingWebhooks = [];
 }
 
-if (!global.pendingWebhooksInterval) {
+// Only set up interval in non-serverless environments
+if (!global.pendingWebhooksInterval && !isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
     global.pendingWebhooksInterval = setInterval(() => {
         if (global.pendingWebhooks.length > 0) {
             const webhook = global.pendingWebhooks.shift();

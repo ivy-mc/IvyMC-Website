@@ -53,6 +53,8 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true
   },
+  // Vercel serverless configuration
+  output: process.env.VERCEL ? 'standalone' : undefined,
   poweredByHeader: false,
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')],

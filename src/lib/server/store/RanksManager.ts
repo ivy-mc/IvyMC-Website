@@ -54,14 +54,20 @@ declare global {
     var rankManager: RankManager;
 }
 
+// Check if running in serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 export default class RankManager {
     public ranks: Rank[] = [];
 
 
     private constructor() {
-        setInterval(async () => {
-            await this.fetchRanks();
-        }, 1000 * 10);
+        // Only set up polling in non-serverless environments
+        if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
+            setInterval(async () => {
+                await this.fetchRanks();
+            }, 1000 * 10);
+        }
     }
 
     public static getInstance(): RankManager {
