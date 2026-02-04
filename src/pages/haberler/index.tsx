@@ -86,37 +86,49 @@ export default function BlogsPage({ blogs, page, lastPage, user }: BlogsProps) {
 
 
 export const getServerSideProps = (async (ctx) => {
-    const blogCountPerPage = 6;
-    const page = parseInt(ctx.query.sayfa as string) || 1;
-    const blogs = BlogManager.getInstance().blogs
-    const lastPage = Math.floor(blogs.length / blogCountPerPage) + 1;
-    if (page < 1) {
-        return {
-            redirect: {
-                destination: '/haberler' + `?sayfa=${lastPage}`,
-                permanent: false
+    try {
+        const blogCountPerPage = 6;
+        const page = parseInt(ctx.query.sayfa as string) || 1;
+        const blogs = BlogManager.getInstance().blogs
+        const lastPage = Math.floor(blogs.length / blogCountPerPage) + 1;
+        if (page < 1) {
+            return {
+                redirect: {
+                    destination: '/haberler' + `?sayfa=${lastPage}`,
+                    permanent: false
+                }
+            }
+        } else if (page > lastPage) {
+            return {
+                redirect: {
+                    destination: '/haberler' + `?sayfa=1`,
+                    permanent: false
+                }
             }
         }
-    } else if (page > lastPage) {
         return {
-            redirect: {
-                destination: '/haberler' + `?sayfa=1`,
-                permanent: false
+            props: {
+                page: page,
+                lastPage: lastPage,
+                blogs: blogs.slice((page - 1) * blogCountPerPage, page * blogCountPerPage).map((blog) => {
+                    const newBlog = {
+                        ...blog,
+                        description: Util.cleanMarkdown(blog.attributes.description).slice(0, 150)
+                    };
+                    return newBlog;
+                }),
+                user: await AuthManager.getInstance().getUserFromContext(ctx)
             }
         }
-    }
-    return {
-        props: {
-            page: page,
-            lastPage: lastPage,
-            blogs: blogs.slice((page - 1) * blogCountPerPage, page * blogCountPerPage).map((blog) => {
-                const newBlog = {
-                    ...blog,
-                    description: Util.cleanMarkdown(blog.attributes.description).slice(0, 150)
-                };
-                return newBlog;
-            }),
-            user: await AuthManager.getInstance().getUserFromContext(ctx)
+    } catch (error) {
+        console.error('Error in getServerSideProps:', error);
+        return {
+            props: {
+                page: 1,
+                lastPage: 1,
+                blogs: [],
+                user: null
+            }
         }
     }
 }) satisfies GetServerSideProps<{ page: number, blogs: Blog[], user: User | null }>

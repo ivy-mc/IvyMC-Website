@@ -105,9 +105,18 @@ export default function PrivacyPolicy(props: PageProps) {
 
 
 export const getServerSideProps = (async (ctx) => {
-    return {
-        props: {
-            user: await AuthManager.getInstance().getUserFromContext(ctx)
+    try {
+        return {
+            props: {
+                user: await AuthManager.getInstance().getUserFromContext(ctx)
+            }
+        }
+    } catch (error) {
+        console.error('Error in getServerSideProps:', error);
+        return {
+            props: {
+                user: null
+            }
         }
     }
 }) satisfies GetServerSideProps<{ user: User | null }>

@@ -68,15 +68,25 @@ export default function Home({ lastBlog }: HomeProps) {
 
 
 export const getServerSideProps = (async (ctx) => {
-    const blogs = BlogManager.getInstance().blogs;
-    const lastBlog = blogs.length > 0 ? blogs[0] : null;
-    return {
-        props: {
-            lastBlog: lastBlog ? {
-                ...lastBlog,
-                description: Util.cleanMarkdown(lastBlog.attributes.description).slice(0, 400) + '...'
-            } : null,
-            user: await AuthManager.getInstance().getUserFromContext(ctx)
+    try {
+        const blogs = BlogManager.getInstance().blogs;
+        const lastBlog = blogs.length > 0 ? blogs[0] : null;
+        return {
+            props: {
+                lastBlog: lastBlog ? {
+                    ...lastBlog,
+                    description: Util.cleanMarkdown(lastBlog.attributes.description).slice(0, 400) + '...'
+                } : null,
+                user: await AuthManager.getInstance().getUserFromContext(ctx)
+            }
+        }
+    } catch (error) {
+        console.error('Error in getServerSideProps:', error);
+        return {
+            props: {
+                lastBlog: null,
+                user: null
+            }
         }
     }
 }) satisfies GetServerSideProps<{ user: User | null, lastBlog: Blog | null }>

@@ -65,16 +65,23 @@ export default function BlogPage({ blog, user }: BlogProps) {
 }
 
 export const getServerSideProps = (async (ctx) => {
-    const blog = BlogManager.getInstance().blogs.find(blog => blog.attributes.path === "/" + ctx.params?.blog);
-    if (!blog) {
+    try {
+        const blog = BlogManager.getInstance().blogs.find(blog => blog.attributes.path === "/" + ctx.params?.blog);
+        if (!blog) {
+            return {
+                notFound: true
+            }
+        }
+        return {
+            props: {
+                blog: blog,
+                user: await AuthManager.getInstance().getUserFromContext(ctx)
+            }
+        }
+    } catch (error) {
+        console.error('Error in getServerSideProps:', error);
         return {
             notFound: true
-        }
-    }
-    return {
-        props: {
-            blog: blog,
-            user: await AuthManager.getInstance().getUserFromContext(ctx)
         }
     }
 }) satisfies GetServerSideProps<{ blog: Blog, user: User | null }>
