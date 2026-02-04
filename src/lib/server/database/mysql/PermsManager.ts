@@ -2,6 +2,7 @@ import ConsoleManager from "../../logs/ConsoleManager";
 import LuckPermsUserPermissions from "./LuckPermsUsersModel";
 import { Op } from 'sequelize';
 import fs from 'fs';
+import path from 'path';
 import RedisManager from "../redis/RedisManager";
 import DiscordOauth2Manager from "../../discord/DiscordOauth2Manager";
 import { pushMetadata } from "../../discord/MetadataUtil";
@@ -12,17 +13,19 @@ declare global {
     var userPermissionsMap: Map<string, string[]>;
 }
 
+const PERMISSIONS_PATH = path.join(process.cwd(), 'src/lib/server/database/mysql/permissions.json');
+
 export default class PermsManager {
     constructor() {
         ConsoleManager.info('PermsManager', 'PermsManager initialized');
         if (!global.userPermissionsMap) {
             global.userPermissionsMap = new Map();
-            if (!fs.existsSync('src/lib/server/database/mysql/permissions.json')) {
-                fs.writeFileSync('src/lib/server/database/mysql/permissions.json', '[]');
+            if (!fs.existsSync(PERMISSIONS_PATH)) {
+                fs.writeFileSync(PERMISSIONS_PATH, '[]');
             }
 
             const jsonArray = JSON.parse(
-                fs.readFileSync('src/lib/server/database/mysql/permissions.json', { encoding: 'utf-8' })
+                fs.readFileSync(PERMISSIONS_PATH, { encoding: 'utf-8' })
             )
 
             jsonArray.forEach((json: any) => {
@@ -125,7 +128,7 @@ export default class PermsManager {
             userPermissionsMap.forEach((permissions, uuid) => {
                 jsonArray.push({ uuid, permissions });
             });
-            fs.writeFileSync('src/lib/server/database/mysql/permissions.json', JSON.stringify(jsonArray, null, 2));
+            fs.writeFileSync(PERMISSIONS_PATH, JSON.stringify(jsonArray, null, 2));
         } catch (error) {
             console.error('Hata:', error);
         }

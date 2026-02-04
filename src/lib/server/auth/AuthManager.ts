@@ -15,6 +15,7 @@ import PlayerManager, { Player } from "./PlayerManager";
 import DiscordOauth2Manager, { DiscordUser } from "../discord/DiscordOauth2Manager";
 import crypto from "crypto";
 import requestIp from 'request-ip';
+import path from 'path';
 
 declare global {
     var authManager: AuthManager;
@@ -63,7 +64,7 @@ export type ResetPasswordRequest = {
     created_at: Date;
 }
 
-const pinMailTemplate: string = fs.readFileSync('src/lib/server/email/PINTemplate.html', { encoding: 'utf-8' });
+const pinMailTemplate: string = fs.readFileSync(path.join(process.cwd(), 'src/lib/server/email/PINTemplate.html'), { encoding: 'utf-8' });
 const emailChangePinTemplate: string = pinMailTemplate.replace('PIN Doğrulama', 'E-posta Değiştirme Doğrulama').replace('Hesabınızı oluşturmak için', 'E-posta adresinizi değiştirmek için');
 
 export default class AuthManager {
