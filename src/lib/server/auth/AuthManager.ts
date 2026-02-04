@@ -85,14 +85,20 @@ export default class AuthManager {
         // Only set up cleanup interval in non-serverless environments
         if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
             setInterval(async () => {
-                const resetPasswordRequests = await this.resetPasswordRequests.find({
-                    created_at: {
-                        $lt: new Date(Date.now() - 1000 * 60 * 5)
-                    }
-                }).toArray();
+                try {
+                    // Ensure MongoDB connection is active
+                    await MongoManager.getInstance().ensureConnected();
+                    const resetPasswordRequests = await this.resetPasswordRequests.find({
+                        created_at: {
+                            $lt: new Date(Date.now() - 1000 * 60 * 5)
+                        }
+                    }).toArray();
 
-                for (const resetPasswordRequest of resetPasswordRequests) {
-                    await this.resetPasswordRequests.deleteOne({ username: resetPasswordRequest.username });
+                    for (const resetPasswordRequest of resetPasswordRequests) {
+                        await this.resetPasswordRequests.deleteOne({ username: resetPasswordRequest.username });
+                    }
+                } catch (err) {
+                    ConsoleManager.error('AuthManager', 'Failed to cleanup old reset password requests: ' + (err as Error).message);
                 }
             }, 1000 * 60);
         }
@@ -141,6 +147,9 @@ export default class AuthManager {
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await MysqlManager.getInstance().changePassword(username, hashedPassword);
+        
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         await this.userCollection.updateOne({ _id: username.toLowerCase() }, { $set: { password: hashedPassword } });
         ConsoleManager.info("AuthManager", "Kullanıcı şifresi değiştirildi: " + username);
     }
@@ -232,6 +241,8 @@ export default class AuthManager {
         }
 
         // PIN doğru, e-postayı değiştir
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         await this.userCollection.updateOne(
             { _id: username.toLowerCase() }, 
             { $set: { email: newEmail.toLowerCase(), updated_at: new Date().toISOString() } }
@@ -250,6 +261,9 @@ export default class AuthManager {
         }
 
         const key = crypto.randomBytes(32).toString('hex');
+        
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         await this.resetPasswordRequests.insertOne({
             username,
             key,
@@ -265,6 +279,8 @@ export default class AuthManager {
             throw new Error("Geçersiz token.");
         }
 
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         const resetPasswordRequest = await this.resetPasswordRequests.findOne({ key });
         if (!resetPasswordRequest) {
             throw new Error("Geçersiz token.");
@@ -283,6 +299,8 @@ export default class AuthManager {
             return false;
         }
 
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         const resetPasswordRequest = await this.resetPasswordRequests.findOne({ key });
         if (!resetPasswordRequest) {
             return false;
@@ -378,6 +396,9 @@ export default class AuthManager {
         };
 
         await MysqlManager.getInstance().registerToLimboAuth(username, hashedPassword, ip);
+        
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         await this.userCollection.updateOne({ _id: newUser._id }, { $set: newUser }, { upsert: true });
 
         ConsoleManager.info("AuthManager", "Kullanıcı kaydedildi: " + username);
@@ -393,10 +414,14 @@ export default class AuthManager {
     }
 
     public async getWebUser(username: string): Promise<WebUser | null> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.userCollection.findOne({ _id: username.toLocaleLowerCase() });
     }
 
     public async getWebUserByEmail(email: string): Promise<WebUser | null> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.userCollection.findOne({ email });
     }
 

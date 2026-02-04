@@ -14,6 +14,8 @@ export default class MongoManager {
     public client: MongoClient;
     public websiteDatabase: Db;
     public minecraftDatabase: Db;
+    private connectionPromise: Promise<void> | null = null;
+    private isConnected: boolean = false;
 
     private constructor() {
         // Serverless-friendly MongoDB configuration
@@ -24,13 +26,11 @@ export default class MongoManager {
             serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
         });
-        this.client.connect().then(() => {
-            ConsoleManager.debug('Mongo Manager', 'Connected to MongoDB');
-        }).catch(err => {
-            ConsoleManager.error('Mongo Manager', 'Failed to connect to MongoDB: ' + err.message);
-        });
         this.websiteDatabase = this.client.db("website");
         this.minecraftDatabase = this.client.db("minecraft");
+        
+        // Initiate connection but don't await it in constructor
+        this.connectionPromise = this.connect();
         
         // Only initialize other managers in non-serverless environments
         // In serverless, managers will be initialized on-demand
@@ -38,6 +38,55 @@ export default class MongoManager {
             RedisManager.getInstance();
             MysqlManager.getInstance();
         }
+    }
+
+    private async connect(): Promise<void> {
+        try {
+            await this.client.connect();
+            this.isConnected = true;
+            ConsoleManager.debug('Mongo Manager', 'Connected to MongoDB');
+        } catch (err) {
+            this.isConnected = false;
+            ConsoleManager.error('Mongo Manager', 'Failed to connect to MongoDB: ' + (err as Error).message);
+            throw err;
+        }
+    }
+
+    /**
+     * Ensures the MongoDB client is connected before performing operations.
+     * This is critical for serverless environments where connections may be closed between invocations.
+     */
+    public async ensureConnected(): Promise<void> {
+        // If already connected, try to ping the database to verify connection is alive
+        if (this.isConnected) {
+            try {
+                // Quick check to verify connection is still alive
+                await this.client.db('admin').command({ ping: 1 });
+                return;
+            } catch (err) {
+                // Connection is dead, mark as disconnected and reconnect
+                ConsoleManager.debug('Mongo Manager', 'Connection lost, reconnecting...');
+                this.isConnected = false;
+            }
+        }
+
+        // If connection is in progress, wait for it
+        if (this.connectionPromise) {
+            try {
+                await this.connectionPromise;
+                this.connectionPromise = null; // Clear the promise after successful connection
+                return;
+            } catch (err) {
+                // Connection failed, try to reconnect
+                this.connectionPromise = null;
+            }
+        }
+
+        // Connection is closed or never established, reconnect
+        ConsoleManager.debug('Mongo Manager', 'Reconnecting to MongoDB');
+        this.connectionPromise = this.connect();
+        await this.connectionPromise;
+        this.connectionPromise = null; // Clear the promise after successful connection
     }
 
     public static getInstance(): MongoManager {

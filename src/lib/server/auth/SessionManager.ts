@@ -1,5 +1,6 @@
 import { Collection } from "mongodb";
 import MongoManager from "../database/mongo/MongoManager";
+import ConsoleManager from "../logs/ConsoleManager";
 import crypto from "crypto";
 
 declare global {
@@ -25,14 +26,20 @@ export default class SessionManager {
         // Only set up cleanup interval in non-serverless environments
         if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
             setInterval(async () => {
-                const sessions = await this.collection.find({
-                    createdAt: {
-                        $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
-                    }
-                }).toArray();
+                try {
+                    // Ensure MongoDB connection is active
+                    await MongoManager.getInstance().ensureConnected();
+                    const sessions = await this.collection.find({
+                        createdAt: {
+                            $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
+                        }
+                    }).toArray();
 
-                for (const session of sessions) {
-                    await this.collection.deleteOne({ token: session.token });
+                    for (const session of sessions) {
+                        await this.collection.deleteOne({ token: session.token });
+                    }
+                } catch (err) {
+                    ConsoleManager.error('SessionManager', 'Failed to cleanup old sessions: ' + (err as Error).message);
                 }
             }, 1000 * 60);
         }
@@ -47,6 +54,9 @@ export default class SessionManager {
     }
 
     public async createSession(username: string, ip: string): Promise<Session> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         const session = {
             username,
             token: crypto.randomBytes(32).toString('hex'),
@@ -58,14 +68,23 @@ export default class SessionManager {
     }
 
     public async updateSession(session: Session): Promise<void> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         await this.collection.updateOne({ token: session.token }, { $set: session });
     }
 
     public async getSession(token: string): Promise<Session | null> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         return this.collection.findOne({ token });
     }
 
     public async getSessionsByIp(ip: string, excludedUsername?: string): Promise<Session[]> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         return this.collection.find({
             ips: ip,
             username: {
@@ -75,10 +94,16 @@ export default class SessionManager {
     }
 
     public async deleteSession(token: string): Promise<void> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         await this.collection.deleteOne({ token });
     }
 
     public async deleteSessionsByUsername(username: string, ignoredToken?: string): Promise<void> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         await this.collection.deleteMany({
             username,
             token: {
@@ -88,6 +113,9 @@ export default class SessionManager {
     }
 
     public async updateUsernameInSessions(oldUsername: string, newUsername: string): Promise<void> {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         await this.collection.updateMany(
             { username: oldUsername },
             { $set: { username: newUsername } }

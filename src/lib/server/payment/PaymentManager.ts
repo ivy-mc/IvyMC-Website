@@ -24,6 +24,8 @@ export default class PaymentManager {
     }
 
     public async addPayment(data: BuyMeACoffeeData) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
         return this.collection.insertOne(data);
     }
 

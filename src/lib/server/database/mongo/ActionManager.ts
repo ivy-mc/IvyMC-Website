@@ -34,6 +34,9 @@ export default class ActionManager {
     }
 
     public async sendAction(action: Action) {
+        // Ensure MongoDB connection is active
+        await MongoManager.getInstance().ensureConnected();
+        
         // MongoDB'ye kaydet (log/history amaçlı)
         await this.collection.insertOne({
             ...action,
