@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import AuthManager from "@/lib/server/auth/AuthManager";
 import Util from "@/lib/common/Util";
 import fs from 'fs';
+import path from 'path';
 import EmailManager from "@/lib/server/email/EmailManager";
 import axios from "axios";
 import ConsoleManager from "@/lib/server/logs/ConsoleManager";
@@ -19,7 +20,7 @@ export const config = {
     },
 };
 
-const resetMailTemplate: string = fs.readFileSync('src/lib/server/email/ResetPasswordTemplate.html', { encoding: 'utf-8' });
+const resetMailTemplate: string = fs.readFileSync(path.join(process.cwd(), 'src/lib/server/email/ResetPasswordTemplate.html'), { encoding: 'utf-8' });
 
 export default async function ResetPasswordHandler(req: NextApiRequest, res: NextApiResponse<Data>) {
     const email = req.body.email;
