@@ -89,7 +89,8 @@ export const getServerSideProps = (async (ctx) => {
     try {
         const blogCountPerPage = 6;
         const page = parseInt(ctx.query.sayfa as string) || 1;
-        const blogs = BlogManager.getInstance().blogs
+        // Ensure blogs are fetched (will use cache or fetch fresh data)
+        const blogs = await BlogManager.getInstance().getBlogs()
         const lastPage = Math.floor(blogs.length / blogCountPerPage) + 1;
         if (page < 1) {
             return {

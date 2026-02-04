@@ -41,12 +41,19 @@ All `setInterval` timers are disabled in serverless environments:
 - Discord metadata updates (disabled)
 - Webhook queue processing (disabled)
 
-In serverless, data is fetched on-demand rather than cached and refreshed with intervals.
+In serverless, data is fetched during initialization and on-demand with a short cache (10 seconds).
 
-### 4. Instrumentation
-The `instrumentation.ts` file now initializes managers differently:
-- **Traditional**: Fetches and caches data on startup
-- **Serverless**: Initializes managers but fetches data on-demand
+### 4. Strapi CMS Integration
+The Strapi CMS integration has been optimized for serverless:
+- **Initialization**: Data from Strapi (blogs, guides, ranks) is fetched during server initialization
+- **On-demand fetching**: If data is empty or stale (>10 seconds in serverless), it's automatically fetched
+- **Caching**: In serverless mode, data is cached for 10 seconds to reduce API calls while staying fresh
+- **Concurrent requests**: Multiple simultaneous fetch requests are handled gracefully to prevent duplicate API calls
+
+### 5. Instrumentation
+The `instrumentation.ts` file now initializes managers consistently:
+- **Both Traditional and Serverless**: Fetches and caches Strapi data on startup
+- **Background polling**: Only enabled in traditional (non-serverless) environments
 
 ## Deployment to Vercel
 
