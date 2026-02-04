@@ -1,8 +1,10 @@
 import { DataTypes, Sequelize } from 'sequelize';
+import mysql2 from 'mysql2';
 
 // Serverless-friendly configuration with connection pooling
 const sequelize = new Sequelize(process.env.MYSQL_LUCPKERMS_URI!, {
     dialect: 'mysql',
+    dialectModule: mysql2,
     logging: false,
     pool: {
         max: 2,
