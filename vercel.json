@@ -1,13 +1,9 @@
 {
-  "buildCommand": "npm run build",
   "framework": "nextjs",
-  "installCommand": "npm install",
-  "env": {
-    "NEXT_RUNTIME": "edge"
-  },
   "functions": {
-    "src/pages/api/**/*.ts": {
+    "pages/api/**/*.ts": {
       "maxDuration": 10
     }
-  }
+  },
+  "regions": ["iad1"]
 }

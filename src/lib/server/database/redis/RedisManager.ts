@@ -16,6 +16,8 @@ export default class RedisManager {
             url: process.env.REDIS_URI,
             socket: {
                 connectTimeout: 10000,
+                // Keep-alive disabled in serverless for proper connection cleanup
+                // Vercel serverless functions are stateless and connections should not persist
                 keepAlive: isServerless ? 0 : 30000,
             }
         });

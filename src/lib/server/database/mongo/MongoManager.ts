@@ -32,8 +32,9 @@ export default class MongoManager {
         this.websiteDatabase = this.client.db("website");
         this.minecraftDatabase = this.client.db("minecraft");
         
-        // Only initialize other managers if not in serverless or during build
-        if (process.env.NEXT_RUNTIME !== 'edge') {
+        // Only initialize other managers in non-serverless environments
+        // In serverless, managers will be initialized on-demand
+        if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
             RedisManager.getInstance();
             MysqlManager.getInstance();
         }
