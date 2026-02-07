@@ -74,7 +74,7 @@ export default function Navbar(navbarProps: {
             autoplay={true}
             mode="normal"
             style={{ width: '28px', height: '28px', marginTop: '1px', pointerEvents: 'none' }}
-            src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
+            src="/assets/animations/diamond.json"
         />
     );
 
@@ -134,34 +134,34 @@ export default function Navbar(navbarProps: {
                         </ul>
                     </div>
                 </div>
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 md:space-x-2 sm:space-x-1">
                     {!navbarProps.user && (<>
-                        <Button type="link" href="/kaydol" className="bg-orange-500 hover:!bg-orange-400">
+                        <Button type="link" href="/kaydol" className="bg-orange-500 hover:!bg-orange-400 md:text-sm md:px-3 md:py-1.5">
                             <span>Kaydol</span>
                         </Button>
-                        <Button type="link" href="/giris-yap" className="bg-blue-500 hover:!bg-blue-400">
+                        <Button type="link" href="/giris-yap" className="bg-blue-500 hover:!bg-blue-400 md:text-sm md:px-3 md:py-1.5">
                             <span>Giriş Yap</span>
                         </Button></>)}
                     {
                         navbarProps.user && (
-                            <div className="flex items-center gap-2">
-                                <Link href={`/profil`} className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 md:gap-1">
+                                <Link href={`/profil`} className="flex items-center gap-2 md:gap-1">
                                     <div
                                         className="flex flex-col">
-                                        <div className="flex items-center justify-center font-medium leading-5">
+                                        <div className="flex items-center justify-center font-medium leading-5 md:text-sm">
                                             <span>{navbarProps.user.username}</span>
                                         </div>
-                                        <div className="flex items-center justify-end gap-1 text-base text-zinc-300">
+                                        <div className="flex items-center justify-end gap-1 text-base text-zinc-300 md:text-sm">
                                             <span>
                                                 {new Intl.NumberFormat().format(navbarProps.user.player.credit).replaceAll(",", ".")}
                                             </span>
-                                            <span className="w-7 h-7 flex items-center justify-center">
+                                            <span className="w-7 h-7 md:w-5 md:h-5 flex items-center justify-center">
                                                 {coinIcon}
                                             </span>
                                         </div>
                                     </div>
                                     <Image
-                                        className="ml-2"
+                                        className="ml-2 md:ml-1 md:!w-10 md:!h-10"
                                         unoptimized
                                         src={avatar} alt="Avatar" width={56} height={56} />
                                 </Link>

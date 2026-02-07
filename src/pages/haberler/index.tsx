@@ -32,7 +32,7 @@ export default function BlogsPage({ blogs, page, lastPage, user }: BlogsProps) {
     }, [page]);
     return (
         <>
-            <div className='mt-28 grid grid-cols-2 md:grid-cols-1 gap-12'>
+            <div className='mt-28 md:mt-20 grid grid-cols-2 md:grid-cols-1 gap-12 md:gap-6'>
                 {
                     blogs.map((blog, index) => (
                         <BlogCard key={index} blog={blog} />

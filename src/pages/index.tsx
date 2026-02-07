@@ -32,7 +32,7 @@ export default function Home({ lastBlog }: HomeProps) {
     return (
         <>
             <Hero />
-            <div className="flex flex-col gap-48 mb-44">
+            <div className="flex flex-col gap-48 md:gap-24 sm:gap-16 mb-44 md:mb-20 sm:mb-12">
                 <Trailer />
                 <News lastBlog={lastBlog} />
                 <Section
@@ -41,7 +41,7 @@ export default function Home({ lastBlog }: HomeProps) {
                     Sunucumuzda en son güncellemeleri, etkinlikleri ve daha fazlasını takip edebilirsiniz. 
                     Ayrıca, diğer oyuncularla sohbet edebilir, yeni arkadaşlıklar kurabilir ve 
                     harika vakit geçirebilirsiniz!"
-                    image="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571582/guard_c78763193f_5d1603d002.png"
+                    image="/assets/home/guard.png"
                     imageAlt="Guard"
                     imageWidth={360}
                     imageHeight={360}
@@ -53,7 +53,7 @@ export default function Home({ lastBlog }: HomeProps) {
                     description="IvyMC Minecraft sunucusunda oynamaya başlamak için rehberlerimizi okuyabilirsiniz. 
                     Bu rehberler; sunucumuzdaki oyunun temelleri, özellikler ve daha fazlası hakkında size bilgi verebilir. 
                     Rehberlerimizi inceleyerek avantaj sağlayabilir ve oyun deneyiminizi daha keyifli hale getirebilirsiniz!"
-                    image="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571619/guide_6dc241b571_17a0588bdd.png"
+                    image="/assets/home/guide.png"
                     imageAlt="Book"
                     imageWidth={360}
                     imageHeight={360}

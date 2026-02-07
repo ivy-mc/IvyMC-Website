@@ -12,8 +12,6 @@ declare global {
 declare namespace NodeJS {
     interface ProcessEnv {
         [key: string]: unknown;
-        STRAPI_URL: string;
-        STRAPI_TOKEN: string;
         MONGO_URI: string;
         REDIS_URI: string;
         MYSQL_AUTH_URI: string;

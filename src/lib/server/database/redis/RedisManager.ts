@@ -32,6 +32,25 @@ export default class RedisManager {
         return this.client;
     }
 
+    public async ensureConnected(): Promise<void> {
+        try {
+            if (!this.client.isOpen) {
+                await this.client.connect();
+            }
+            await this.client.ping();
+        } catch (err) {
+            ConsoleManager.error('Redis Manager', 'Reconnecting to Redis...');
+            try {
+                if (!this.client.isOpen) {
+                    await this.client.connect();
+                }
+            } catch (reconnectErr) {
+                ConsoleManager.error('Redis Manager', 'Redis reconnection failed: ' + (reconnectErr as any).message);
+                throw reconnectErr;
+            }
+        }
+    }
+
     public static getInstance(): RedisManager {
         if (!global.redisManager) {
             global.redisManager = new RedisManager();

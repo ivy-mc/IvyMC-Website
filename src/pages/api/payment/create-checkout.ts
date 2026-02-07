@@ -12,29 +12,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        // BuyMeACoffee Membership Plan Mapping
-        // BMC'de oluşturduğunuz her rank için membership plan ID'leri
-        const membershipPlans: Record<string, string> = {
-            'cirak': '12345',    // BMC'de oluşturduğunuz Çırak membership ID'si
-            'asil': '12346',     // Asil membership ID'si
-            'soylu': '12347',    // Soylu membership ID'si
-            'senyor': '12348',   // Senyor membership ID'si
-        };
-
-        const planId = membershipPlans[rank_id];
-        
-        if (!planId) {
-            return res.status(400).json({ error: 'Invalid rank ID' });
-        }
-
         // BuyMeACoffee kullanıcı adınız
         const bmcUsername = process.env.BUYMEACOFFEE_USERNAME || 'ivymc';
         
-        // BMC Membership URL'i - kullanıcı bu sayfaya yönlendirilecek
-        // BMC otomatik olarak Stripe üzerinden ödeme alacak
-        const membershipUrl = `https://www.buymeacoffee.com/${bmcUsername}/membership/${planId}`;
+        // Tüm membership seçeneklerinin yer aldığı genel membership sayfası
+        // Hangi rank'e tıklamış olursa olsun, kullanıcı bu sayfada tüm seçenekleri görecek
+        const membershipUrl = `https://www.buymeacoffee.com/${bmcUsername}/membership`;
 
-        console.log(`[create-checkout] Redirecting to BMC membership: ${membershipUrl}`);
+        console.log(`[create-checkout] Redirecting to BMC membership page for rank: ${rank_id}`);
 
         return res.status(200).json({
             url: membershipUrl,

@@ -15,7 +15,7 @@ export default function CategoryCard(props: {
             <div
                 className='flex relative p-8 md:p-6 rounded-lg shadow-lg 
                 before:backdrop-blur-sm before:z-10 before:rounded-lg 
-                bg-[url("/uploads/cave_00794007df.png")] bg-cover bg-center bg-no-repeat 
+                bg-[url("/assets/store/cave-bg.png")] bg-cover bg-center bg-no-repeat 
                 before:absolute before:top-0 before:left-0 before:w-full before:h-full 
                 before:bg-black/70 md:flex-col-reverse'>
                 <div className='flex flex-col gap-4 z-20 md:items-center md:gap-1'>
@@ -40,14 +40,13 @@ export default function CategoryCard(props: {
                         </Button>
                     </div>
                 </div>
-                <div className='z-20 md:px-24 md:mb-6'>
+                <div className='z-20 md:px-16 sm:px-8 md:mb-6'>
                     <Image
+                        className='max-w-full h-auto'
                         src={props.icon}
                         alt={props.title + " Icon"}
                         width={250}
                         height={250}
-                        placeholder='blur'
-                        blurDataURL={props.icon.replace("/uploads/", "/uploads/thumbnail_")}
                     />
                 </div>
             </div>

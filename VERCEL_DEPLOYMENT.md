@@ -43,17 +43,16 @@ All `setInterval` timers are disabled in serverless environments:
 
 In serverless, data is fetched during initialization and on-demand with a short cache (10 seconds).
 
-### 4. Strapi CMS Integration
-The Strapi CMS integration has been optimized for serverless:
-- **Initialization**: Data from Strapi (blogs, guides, ranks) is fetched during server initialization
-- **On-demand fetching**: If data is empty or stale (>10 seconds in serverless), it's automatically fetched
-- **Caching**: In serverless mode, data is cached for 10 seconds to reduce API calls while staying fresh
-- **Concurrent requests**: Multiple simultaneous fetch requests are handled gracefully to prevent duplicate API calls
+### 4. Static Data (Strapi Removed)
+Strapi CMS dependency has been removed. All content data (blogs, guides, ranks) is now stored as static TypeScript files in `src/data/`:
+- `src/data/blogs.ts` - Blog posts
+- `src/data/guides.ts` - Guides
+- `src/data/ranks.ts` - Ranks and credit market data
+
+Images are served from `/public/assets/` directory.
 
 ### 5. Instrumentation
-The `instrumentation.ts` file now initializes managers consistently:
-- **Both Traditional and Serverless**: Fetches and caches Strapi data on startup
-- **Background polling**: Only enabled in traditional (non-serverless) environments
+The `instrumentation.ts` file initializes managers from static data on startup.
 
 ## Deployment to Vercel
 
@@ -69,8 +68,6 @@ Set these in your Vercel project dashboard:
 - `MYSQL_AUTH_URI` - MySQL auth database connection string
 - `MYSQL_LUCPKERMS_URI` - MySQL LuckPerms database connection string
 - `REDIS_URI` - Redis connection string
-- `STRAPI_URL` - Strapi CMS URL
-- `STRAPI_TOKEN` - Strapi API token
 - `CLIENT_ID` - Discord OAuth2 client ID
 
 **Optional Discord:**

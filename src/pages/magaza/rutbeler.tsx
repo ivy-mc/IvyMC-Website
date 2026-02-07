@@ -62,13 +62,13 @@ export default function RanksPage({ user, ranks }: RanksProps) {
 
     return (
         <>
-            <div className='mt-28' data-aos="fade-down">
+            <div className='mt-28 md:mt-20' data-aos="fade-down">
                 <div
-                    className='flex flex-col relative py-16 px-12 md:p-12 rounded-lg shadow-lg 
+                    className='flex flex-col relative py-16 px-12 md:py-10 md:px-6 sm:py-8 sm:px-4 rounded-lg shadow-lg 
                     bg-cover bg-center bg-no-repeat overflow-hidden
                     md:items-center'
                     style={{
-                        backgroundImage: `url("https://res.cloudinary.com/dkcpwrjza/image/upload/v1768598806/magaza_bg_cd740627c7.png")`
+                        backgroundImage: `url("/assets/store/rutbeler-bg.png")`
                     }}>
                     {/* Dark overlay */}
                     <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
@@ -92,6 +92,7 @@ export default function RanksPage({ user, ranks }: RanksProps) {
                             key={index}
                             title={rank.attributes.title}
                             price={rank.attributes.price!}
+                            priceEur={rank.attributes.priceEur ?? undefined}
                             credit_market_id={rank.attributes.credit_market_id}
                             user={user}
                             discount={
@@ -101,7 +102,7 @@ export default function RanksPage({ user, ranks }: RanksProps) {
                                         percentage: rank.attributes.discount_percentage,
                                         end_date: rank.attributes.discount_end_date
                                     }}
-                            icon={rank.attributes.icon.data.attributes.url}
+                            icon={rank.attributes.icon}
                             privileges={rank.attributes.privileges}
                         />
                     )

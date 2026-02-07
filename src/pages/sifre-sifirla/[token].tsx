@@ -75,10 +75,11 @@ export default function ResetPasswordTokenPage(props: PageProps & { token: strin
 
     return (
         <>
-            <div className='w-full flex justify-between items-center mt-36 mb-36 gap-28 flex-wrap' data-aos="fade-down">
-                <div className='flex-[5_0_0%] flex justify-end items-end min-w-[23rem] md:min-w-0'>
+            <div className='w-full flex justify-between items-center mt-36 md:mt-20 sm:mt-12 mb-36 md:mb-20 sm:mb-12 gap-28 md:gap-10 flex-wrap md:justify-center' data-aos="fade-down">
+                <div className='flex-[5_0_0%] flex justify-end items-end min-w-[23rem] md:min-w-0 md:justify-center md:w-full'>
                     <Image
-                        src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571598/wizard_90f703e5a7_3b2f279546.png"
+                        className='max-w-full h-auto'
+                        src="/assets/auth/wizard.png"
                         alt="Register Image"
                         placeholder='blur'
                         blurDataURL='/uploads/thumbnail_wizard_90f703e5a7.png'
@@ -87,7 +88,7 @@ export default function ResetPasswordTokenPage(props: PageProps & { token: strin
                     />
                 </div>
                 <div className='flex-[9_0_0%]' >
-                    <h1 className='text-4xl font-semibold'>Şifreni Sıfırla</h1>
+                    <h1 className='text-4xl md:text-3xl font-semibold'>Şifreni Sıfırla</h1>
                     {
                         submitting &&
                         <p className='text-zinc-400 mt-4'>İşlem yapılıyor...</p>

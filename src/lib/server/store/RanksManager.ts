@@ -1,4 +1,4 @@
-import axios from "axios"
+import { RANKS_DATA } from "@/data/ranks";
 
 
 export type RankPrivileges = {
@@ -22,8 +22,9 @@ export type PublicRank = {
         credit_market_id: string,
         discount_percentage: number | null,
         discount_end_date: string | null,
-        icon: StrapiImage,
+        icon: string,
         price: number | null;
+        priceEur?: number | null;
     }
 }
 
@@ -54,24 +55,28 @@ declare global {
     var rankManager: RankManager;
 }
 
-// Check if running in serverless environment
-const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
-
 export default class RankManager {
     public ranks: Rank[] = [];
-    private isFetching: boolean = false;
-    private lastFetchTime: number = 0;
-    private cacheDuration: number = 10000; // 10 seconds cache in serverless
-    private fetchPromise: Promise<Rank[]> | null = null;
-
 
     private constructor() {
-        // Only set up polling in non-serverless environments
-        if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
-            setInterval(async () => {
-                await this.fetchRanks();
-            }, 1000 * 10);
-        }
+        this.ranks = RANKS_DATA.map((rank) => {
+            const result = { ...rank };
+            // İndirim süresi dolmuşsa indirimi kaldır
+            if (result.attributes.discount_percentage && result.attributes.discount_end_date) {
+                const end_date = new Date(result.attributes.discount_end_date);
+                const now = new Date();
+                if (end_date < now) {
+                    result.attributes = {
+                        ...result.attributes,
+                        discount_percentage: null,
+                        discount_end_date: null,
+                    };
+                }
+            }
+            return result;
+        }).sort((a, b) => {
+            return new Date(a.attributes.publishedAt).getTime() - new Date(b.attributes.publishedAt).getTime();
+        });
     }
 
     public static getInstance(): RankManager {
@@ -82,18 +87,7 @@ export default class RankManager {
         return global.rankManager;
     }
 
-    // Get ranks with automatic fetch if empty or stale
     public async getRanks(): Promise<Rank[]> {
-        const now = Date.now();
-        const shouldRefetch = isServerless && (now - this.lastFetchTime > this.cacheDuration);
-        
-        if ((this.ranks.length === 0 || shouldRefetch) && !this.isFetching) {
-            await this.fetchRanks();
-        } else if (this.isFetching && this.fetchPromise) {
-            // Wait for the ongoing fetch to complete
-            await this.fetchPromise;
-        }
-        
         return this.ranks;
     }
 
@@ -108,6 +102,7 @@ export default class RankManager {
                     discount_end_date: rank.attributes.discount_end_date,
                     icon: rank.attributes.icon,
                     price: rank.attributes.price,
+                    priceEur: rank.attributes.priceEur,
                     privileges: rank.attributes.privileges,
                 }
             }
@@ -116,102 +111,5 @@ export default class RankManager {
 
     public getRankByCreditMarketId(creditMarketId: string): Rank | null {
         return this.ranks.find((rank) => rank.attributes.credit_market_id === creditMarketId) || null;
-    }
-
-    public async fetchRanks(): Promise<Rank[]> {
-        if (this.isFetching && this.fetchPromise) {
-            // Return the existing promise to wait for the ongoing fetch
-            return this.fetchPromise;
-        }
-        
-        this.isFetching = true;
-        this.fetchPromise = (async () => {
-            try {
-                const result = await axios.get(process.env.STRAPI_URL + "/api/ranks?populate=*",
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${process.env.STRAPI_TOKEN}`
-                        }
-                    }).then((response) => response.data as { data: Rank[] });
-
-                const creditMarket = await axios.get(process.env.STRAPI_URL + "/api/credit-market",
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${process.env.STRAPI_TOKEN}`
-                        }
-                    }).then((response) => {
-                        // Extract the products object which contains ranks array
-                        const productsData = response.data.data?.products || response.data.data?.attributes?.products || { ranks: [], crates: [] };
-                        return productsData as CreditMarket;
-                    });
-
-                this.ranks = result.data.map((rank: any) => {
-                    if (!rank.credit_market_id) {
-                        console.warn(`[RanksManager] Rank "${rank.title}" has no credit_market_id, skipping...`);
-                        return null;
-                    }
-                    const creditMarketProduct = creditMarket.ranks?.find((product) => product.id === rank.credit_market_id);
-                    const rankResult = {
-                        id: rank.id,
-                        attributes: {
-                            title: rank.title,
-                            credit_market_id: rank.credit_market_id,
-                            discount_percentage: rank.discount_percentage || null,
-                            discount_end_date: rank.discount_end_date || null,
-                            price: creditMarketProduct?.price || null,
-                            item: creditMarketProduct?.item || null,
-                            privileges: typeof rank.privileges === 'string' ? JSON.parse(rank.privileges) : rank.privileges,
-                            commands: creditMarketProduct?.commands || null,
-                            publishedAt: rank.publishedAt,
-                            icon: {
-                                data: {
-                                    attributes: {
-                                        name: rank.icon.name,
-                                        width: rank.icon.width,
-                                        height: rank.icon.height,
-                                        url: rank.icon.url,
-                                        blurhash: rank.icon.blurhash || null,
-                                        formats: {
-                                            thumbnail: {
-                                                url: rank.icon.formats.thumbnail.url,
-                                                width: rank.icon.formats.thumbnail.width,
-                                                height: rank.icon.formats.thumbnail.height
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                    if (rankResult.attributes.discount_percentage && rankResult.attributes.discount_end_date) {
-                        const end_date = new Date(rankResult.attributes.discount_end_date);
-                        const now = new Date();
-                        if (end_date < now) {
-                            rankResult.attributes.discount_percentage = null;
-                            rankResult.attributes.discount_end_date = null;
-                        }
-                    }
-                    
-                    return rankResult;
-                }).filter((rank): rank is Rank => rank !== null)
-                .sort((a, b) => {
-                    return new Date(a.attributes.publishedAt).getTime() - new Date(b.attributes.publishedAt).getTime();
-                });
-                this.lastFetchTime = Date.now();
-                return this.ranks;
-            } catch (error) {
-                console.error("Error fetching ranks", error);
-                return [];
-            } finally {
-                this.isFetching = false;
-                this.fetchPromise = null;
-            }
-        })();
-        
-        return this.fetchPromise;
     }
 }

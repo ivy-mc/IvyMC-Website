@@ -1,4 +1,4 @@
-import axios from "axios"
+import { BLOGS_DATA } from "@/data/blogs";
 
 export type Blog = {
     id: number;
@@ -9,7 +9,7 @@ export type Blog = {
         createdAt: string;
         updatedAt: string;
         publishedAt: string;
-        thumbnail: StrapiImage;
+        thumbnail: string;
         path: string;
     }
 }
@@ -18,24 +18,13 @@ declare global {
     var blogManager: BlogManager;
 }
 
-// Check if running in serverless environment
-const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
-
 export default class BlogManager {
     public blogs: Blog[] = [];
-    private isFetching: boolean = false;
-    private lastFetchTime: number = 0;
-    private cacheDuration: number = 10000; // 10 seconds cache in serverless
-    private fetchPromise: Promise<Blog[]> | null = null;
-
 
     private constructor() {
-        // Only set up polling in non-serverless environments
-        if (!isServerless && process.env.NEXT_RUNTIME === 'nodejs') {
-            setInterval(async () => {
-                await this.fetchBlogs();
-            }, 1000 * 10);
-        }
+        this.blogs = BLOGS_DATA.sort((a, b) => {
+            return new Date(b.attributes.publishedAt).getTime() - new Date(a.attributes.publishedAt).getTime();
+        });
     }
 
     public static getInstance(): BlogManager {
@@ -46,83 +35,7 @@ export default class BlogManager {
         return global.blogManager;
     }
 
-    // Get blogs with automatic fetch if empty or stale
     public async getBlogs(): Promise<Blog[]> {
-        const now = Date.now();
-        const shouldRefetch = isServerless && (now - this.lastFetchTime > this.cacheDuration);
-        
-        if ((this.blogs.length === 0 || shouldRefetch) && !this.isFetching) {
-            await this.fetchBlogs();
-        } else if (this.isFetching && this.fetchPromise) {
-            // Wait for the ongoing fetch to complete
-            await this.fetchPromise;
-        }
-        
         return this.blogs;
-    }
-
-    public async fetchBlogs(): Promise<Blog[]> {
-        if (this.isFetching && this.fetchPromise) {
-            // Return the existing promise to wait for the ongoing fetch
-            return this.fetchPromise;
-        }
-        
-        this.isFetching = true;
-        this.fetchPromise = (async () => {
-            try {
-                const result = await axios.get(process.env.STRAPI_URL + "/api/blogs?populate=*",
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${process.env.STRAPI_TOKEN}`
-                        }
-                    }).then((response) => response.data as { data: Blog[] });
-
-                this.blogs = result.data.map((blog) => {
-                    return {
-                        id: blog.id,
-                        attributes: {
-                            title: blog.attributes.title,
-                            category: blog.attributes.category,
-                            description: blog.attributes.description,
-                            createdAt: blog.attributes.createdAt,
-                            updatedAt: blog.attributes.updatedAt,
-                            publishedAt: blog.attributes.publishedAt,
-                            path: blog.attributes.path,
-                            thumbnail: {
-                                data: {
-                                    attributes: {
-                                        name: blog.attributes.thumbnail.data.attributes.name,
-                                        width: blog.attributes.thumbnail.data.attributes.width,
-                                        height: blog.attributes.thumbnail.data.attributes.height,
-                                        url: blog.attributes.thumbnail.data.attributes.url,
-                                        blurhash: blog.attributes.thumbnail.data.attributes.blurhash,
-                                        formats: {
-                                            thumbnail: {
-                                                url: blog.attributes.thumbnail.data.attributes.formats.thumbnail.url,
-                                                width: blog.attributes.thumbnail.data.attributes.formats.thumbnail.width,
-                                                height: blog.attributes.thumbnail.data.attributes.formats.thumbnail.height
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }).sort((a, b) => {
-                    return new Date(b.attributes.publishedAt).getTime() - new Date(a.attributes.publishedAt).getTime();
-                });
-                this.lastFetchTime = Date.now();
-                return this.blogs;
-            } catch (error) {
-                console.error("Error fetching blogs", error);
-                return [];
-            } finally {
-                this.isFetching = false;
-                this.fetchPromise = null;
-            }
-        })();
-        
-        return this.fetchPromise;
     }
 }

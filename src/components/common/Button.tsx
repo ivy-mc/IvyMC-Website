@@ -25,30 +25,22 @@ export default function Button(props: ButtonProps) {
     const classNames = `flex items-center space-x-2 text-center text-lg rounded-md font-semibold text-white transition duration-300 leading-7 px-5 py-2 cursor-pointer${className.includes(" bg-") ? " shadow-lg" : ""} ${className}`;
 
     const coinRef = React.useRef(null);
+    const rootRef = React.useRef<Root | null>(null);
     const [showPopUp, setShowPopUp] = React.useState<boolean>(false);
+    const popupTitle = "Mücevher Satın Al";
 
     // @ts-ignore
-    const lottie = <lottie-player
-        id="navbar_coin"
-        ref={coinRef}
-        speed={1}
-        loop={true}
-        mode="normal"
-        autoplay={true}
-        style={{ pointerEvents: 'none' }}
-        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
-    />
-    const rootRef = useRef<Root | null>(null);
-
-    const popupTitle = (
-        <div className="flex items-center justify-center gap-2">
+    const lottie = (
+        <div className="flex items-center space-x-2">
             <lottie-player
+                id="navbar_coin"
+                ref={coinRef}
                 speed={1}
                 loop={true}
-                autoplay={true}
                 mode="normal"
-                style={{ width: '32px', height: '32px', pointerEvents: 'none' }}
-                src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
+                autoplay={true}
+                style={{ width: '36px', height: '36px', pointerEvents: 'none' }}
+                src="/assets/animations/diamond.json"
             />
             <span>Mücevher Satın Al</span>
         </div>
@@ -66,7 +58,7 @@ export default function Button(props: ButtonProps) {
                     <div className="flex-1 flex items-center justify-center min-w-0">
                         <Image
                             className="w-full h-auto rounded-lg overflow-hidden shadow-lg object-contain"
-                            src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768726797/shoppingcart_e4a105470c.png"
+                            src="/assets/store/shopping-cart.png"
                             alt="Kredi Yükle"
                             width={300}
                             height={240}
@@ -136,7 +128,9 @@ export default function Button(props: ButtonProps) {
     
     if (type === "link") {
         const { href } = (props as any);
-        if (href.includes("kredi-yukle")) {
+        const isMucevherLink = href.includes("kredi-yukle");
+        
+        if (isMucevherLink) {
 
             useEffect(() => {
                 if (showPopUp && rootRef.current) {
@@ -174,7 +168,11 @@ export default function Button(props: ButtonProps) {
                     onClick={() => {
                         setShowPopUp(true);
                     }}
-                >{children}<span className="w-10 h-10 ml-2 mt-0.5"> {lottie} </span></button>
+                >
+                    <span className="flex items-center space-x-2">
+                        {lottie}
+                    </span>
+                </button>
             )
         }
 

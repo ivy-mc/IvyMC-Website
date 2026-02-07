@@ -55,7 +55,7 @@ export default function App({ Component, pageProps }: PageProps & AppProps) {
         <meta name="apple-mobile-web-app-title" content="OrleansMC - Minecraft Sunucusu" />
         <meta name="color-scheme" content="dark" />
 
-        {/* Favicon - TODO: Cloudinary'den güncellenecek */}
+        {/* Favicon */}
         {/* <link rel="shortcut icon" href="/_next/image?url=/uploads/icon_79e19a6c43.png&w=48&q=100"></link>
         <link rel="apple-touch-icon" href="/_next/image?url=/uploads/icon_79e19a6c43.png&w=512&q=100" sizes="512x512"></link> */}
 
@@ -63,7 +63,7 @@ export default function App({ Component, pageProps }: PageProps & AppProps) {
         <meta name="twitter:site" property="twitter:site" content="@ivymc" />
 
         <meta name="og:type" property="og:type" content="website" />
-        <meta name="og:image" property="og:image" content="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571477/logo_3619be7de1.png" />
+        <meta name="og:image" property="og:image" content="/assets/logo.png" />
         <meta name="og:image:width" property="og:image:width" content="512" />
         <meta name="og:image:height" property="og:image:height" content="512" />
         <meta name="og:image:type" property="og:image:type" content="image/png" />

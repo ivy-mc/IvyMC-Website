@@ -10,37 +10,42 @@ type BlogCardProp = {
 
 export default function BlogCard({ blog }: BlogCardProp) {
     return (
-        <article className="flex flex-col justify-center items-center" data-aos="zoom-in">
+        <article className="h-full" data-aos="fade-up">
             <Link
-                className="flex flex-row lg:items-center gap-6 hover:shadow-lg
-                transition-transform flex-col hover:scale-[1.03] p-8 rounded-lg bg-dark-950 hover:bg-dark-900 transform-gpu"
+                className="flex flex-col h-full rounded-lg overflow-hidden bg-dark-900 border border-dark-800 hover:border-dark-700 transition-all duration-300 hover:shadow-md group"
                 href={`/haberler${blog.attributes.path}`}>
-                <div className="relative rounded-lg overflow-hidden">
+                {/* Görsel */}
+                <div className="relative w-full h-48 overflow-hidden bg-dark-950">
                     <Image
-                        className=""
-                        src={blog.attributes.thumbnail.data.attributes.url}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        src={blog.attributes.thumbnail}
                         alt="Blog Thumbnail"
                         width={750}
                         height={424}
-                        placeholder="blur"
-                        blurDataURL={blog.attributes.thumbnail.data.attributes.formats.thumbnail.url}
                     />
                 </div>
-                <div className="lg:text-center">
-                    <h3 className="text-2xl font-semibold mb-2">{blog.attributes.title}</h3>
-                    <span className="text-zinc-500 text-lg">
-                        <span className={"font-semibold"} style={{ color: Util.getBlogCategoryColor(blog.attributes.category) }}>
+                
+                {/* İçerik */}
+                <div className="flex flex-col flex-1 p-4">
+                    {/* Başlık */}
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-2 group-hover:text-zinc-100 transition-colors">
+                        {blog.attributes.title}
+                    </h3>
+                    
+                    {/* Meta bilgi */}
+                    <div className="text-xs text-zinc-500 mb-3">
+                        <span className="font-semibold" style={{ color: Util.getBlogCategoryColor(blog.attributes.category) }}>
                             {blog.attributes.category}
                         </span>
-                        <span className="mx-2">
-                            -
-                        </span>
+                        <span className="mx-1">•</span>
                         <span>
                             {Util.dateToString(blog?.attributes.publishedAt ?? new Date())}
                         </span>
-                    </span>
-                    <p className="text-lg text-zinc-400 mt-2 leading-8 text-pretty">
-                        {Util.cleanMarkdown(blog.attributes.description).slice(0, 140)}...
+                    </div>
+                    
+                    {/* Açıklama */}
+                    <p className="text-sm text-zinc-400 line-clamp-2 flex-1">
+                        {Util.cleanMarkdown(blog.attributes.description).slice(0, 100)}...
                     </p>
                 </div>
             </Link>

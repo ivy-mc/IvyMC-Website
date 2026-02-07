@@ -46,7 +46,7 @@ if (!global.pendingMetadatasInterval && !isServerless && process.env.NEXT_RUNTIM
  * Given metadata that matches the schema, push that data to Discord on behalf
  * of the current user.
  */
-export function pushMetadata(accessToken: string, metadata?: {
+export async function pushMetadata(accessToken: string, metadata?: {
     oyuncu: number;
     cirak: number;
     asil: number;
@@ -58,7 +58,24 @@ export function pushMetadata(accessToken: string, metadata?: {
         platform_name: 'IvyMC Role Connection',
         metadata: metadata || {}
     };
-    global.pendingMetadatas.push({ accessToken, body });
+
+    // Serverless ortamda hemen gönder, değilse kuyruğa ekle
+    if (isServerless) {
+        const url = `https://discord.com/api/users/@me/applications/${process.env.CLIENT_ID}/role-connection`;
+        try {
+            await axios.put(url, body, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            ConsoleManager.info('MetadataUtil', 'Discord metadata pushed (serverless): ' + JSON.stringify(body));
+        } catch (err) {
+            ConsoleManager.error('MetadataUtil', 'Error pushing discord metadata (serverless): ' + err);
+        }
+    } else {
+        global.pendingMetadatas.push({ accessToken, body });
+    }
 }
 
 /**

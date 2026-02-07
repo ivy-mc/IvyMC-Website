@@ -60,6 +60,16 @@ export type BuyMeACoffeePlayload = {
     data: BuyMeACoffeeData,
 }
 
+// Sabit mücevher paketleri - paket ismine göre mücevher miktarı
+const GEM_PACKAGES: Record<string, number> = {
+    "Kral Hazinesi": 2500,
+    "Lord Kasası": 1800,
+    "Şövalye Hazinesi": 1150,
+    "Tüccar Sandığı": 555,
+    "Madenci Çantası": 285,
+    "Başlangıç Kesesi": 125,
+};
+
 export default async function BuyMeACoffeeHandler(req: NextApiRequest, res: NextApiResponse<Data>) {
     try {
         const body = req.body as BuyMeACoffeePlayload;
@@ -84,9 +94,13 @@ export default async function BuyMeACoffeeHandler(req: NextApiRequest, res: Next
         }
 
         for (const extra of body.data.extras) {
-            const creditAmount = parseInt(extra.title.split(" ")[0].replace(/[^0-9]/g, "")) || 0;
-            await PaymentManager.getInstance().addCredit(user.username, creditAmount,
-                `BuyMeACoffee'den ${user.username} (${body.data.supporter_name}) tarafından ${creditAmount} kredi satın alındı`);
+            const gemAmount = GEM_PACKAGES[extra.title] || 0;
+            if (gemAmount === 0) {
+                ConsoleManager.error("BuyMeACoffeeHandler", `Unknown gem package: ${extra.title}`);
+                continue;
+            }
+            await PaymentManager.getInstance().addCredit(user.username, gemAmount,
+                `BuyMeACoffee'den ${user.username} (${body.data.supporter_name}) tarafından ${gemAmount} mücevher satın alındı - ${extra.title}`);
         }
         await PaymentManager.getInstance().addPayment(body.data);
         WebhookManager.sendCreditPurchaseWebhook(body.data, user);

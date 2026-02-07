@@ -23,18 +23,15 @@ export default class Util {
         )}, ${new Date(date).getFullYear()}`
     }
 
+    /**
+     * @deprecated Strapi kaldırıldı. Görseller artık /public/assets/ altında statik olarak barınıyor.
+     * Geriye dönük uyumluluk için bırakıldı - URL'yi olduğu gibi döndürür.
+     */
     public static getStrapiMedia(url: string | null) {
         if (url == null) {
             return null;
         }
-
-        // URL http veya https ile başlıyorsa (Cloudinary gibi) olduğu gibi döndür
-        if (url.startsWith("http") || url.startsWith("//")) {
-            return url;
-        }
-
-        // Aksi halde API URL'ini başına ekle
-        return `${process.env.NEXT_PUBLIC_STRAPI_API_URL || process.env.STRAPI_URL || "http://localhost:1337"}${url}`;
+        return url;
     }
 
     public static cleanMarkdown(text: string) {

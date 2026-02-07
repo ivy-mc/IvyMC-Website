@@ -32,13 +32,13 @@ GuidePage.getLayout = function getLayout(page: React.ReactNode, pageProps: Guide
 
 export default function GuidePage({ guide, user }: GuideProps) {
     return (
-        <div className="mt-28">
+        <div className="mt-28 md:mt-20">
             <div data-aos="fade-down" className="flex items-center bg-dark-800 p-8 md:p-6 rounded-lg shadow-lg md:flex-col md:gap-8">
-                <div className={styles2.guide_card__icon + " !w-56 !h-56"}>
+                <div className={styles2.guide_card__icon + " !w-56 !h-56 md:!w-40 md:!h-40"}>
                     <div className={styles2.guide_card__icon__background}
-                        style={{ background: `url(${guide.attributes.icon.data.attributes.url}) center center / cover no-repeat` }}></div>
+                        style={{ background: `url(${guide.attributes.icon}) center center / cover no-repeat` }}></div>
                     <Image
-                        src={guide.attributes.icon.data.attributes.url}
+                        src={guide.attributes.icon}
                         alt="Server Icon"
                         width={210}
                         height={210}
@@ -48,7 +48,7 @@ export default function GuidePage({ guide, user }: GuideProps) {
                 <div className="ml-8 md:flex md:flex-col md:items-center md:gap-4 md:ml-0">
                     <div>
                         <h2 className="text-xl font-semibold uppercase text-zinc-400 md:text-center">{guide.attributes.sub_title}</h2>
-                        <h1 className="text-4xl tracking-wider font-semibold mt-2 md:text-center">{guide.attributes.title}</h1>
+                        <h1 className="text-4xl md:text-3xl sm:text-2xl tracking-wider font-semibold mt-2 md:text-center">{guide.attributes.title}</h1>
                     </div>
                     <Button href={"/discord"}
                         blank

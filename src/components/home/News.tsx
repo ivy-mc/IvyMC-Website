@@ -34,15 +34,16 @@ export default function News({ lastBlog }: NewsProps) {
                 <p className="text-lg text-center text-zinc-400"
                 >OrleansMC sunucusu ile ilgili haberler ve güncellemeler</p>
             </div>
-            <div className="lg:max-w-[40rem]">
+            <div className="lg:max-w-[40rem] md:max-w-full">
                 <Link
-                    className="flex flex-row items-end lg:items-center space-x-8 hover:shadow-lg p-8 
+                    className="flex flex-row items-end lg:items-center space-x-8 hover:shadow-lg p-8 md:p-4 sm:p-3
                     rounded-lg bg-dark-950 hover:bg-dark-900 transition-transform
                     lg:flex-col lg:space-x-0 lg:space-y-8"
                     href={`/haberler${lastBlog.attributes.path}`}>
-                    <div className="relative rounded-lg overflow-hidden flex-[1_0_0%]">
+                    <div className="relative rounded-lg overflow-hidden flex-[1_0_0%] max-w-full">
                         <Image
-                            src={lastBlog.attributes.thumbnail.data.attributes.url}
+                            className="max-w-full h-auto"
+                            src={lastBlog.attributes.thumbnail}
                             alt={lastBlog.attributes.title}
                             width={245 * 3}
                             height={53 * 3}

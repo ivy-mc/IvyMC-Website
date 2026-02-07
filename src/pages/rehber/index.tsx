@@ -25,12 +25,12 @@ GuidesPage.getLayout = function getLayout(page: React.ReactNode, pageProps: Page
 export default function GuidesPage({ guides, user }: GuidesProps) {
     return (
         <>
-            <div className='mt-28'>
+            <div className='mt-28 md:mt-20'>
                 <div
                     data-aos="fade-down"
-                    className='flex flex-col relative p-16 md:p-12 rounded-lg shadow-lg bg-cover bg-center bg-no-repeat overflow-hidden'
+                    className='flex flex-col relative p-16 md:p-8 sm:p-6 rounded-lg shadow-lg bg-cover bg-center bg-no-repeat overflow-hidden'
                     style={{
-                        backgroundImage: 'url(https://res.cloudinary.com/dkcpwrjza/image/upload/v1768634649/rehber_bg_6b108cadc4.png)'
+                        backgroundImage: 'url(/assets/rehber/rehber-bg.png)'
                     }}>
                     <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
                     <h1 className='text-4xl font-semibold text-center z-20 relative'>IvyMC Rehberler</h1>

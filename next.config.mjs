@@ -53,9 +53,12 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true
   },
-  // Vercel serverless configuration
-  output: process.env.VERCEL ? 'standalone' : undefined,
+  // Vercel handles build optimization automatically - no standalone needed
   poweredByHeader: false,
+  // Ensure email templates are included in serverless bundle
+  outputFileTracingIncludes: {
+    '/api/**': ['./src/lib/server/email/**'],
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')],
   },
@@ -63,16 +66,6 @@ const nextConfig = {
     remotePatterns: [
       {
         hostname: 'flagcdn.com'
-      },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com'
-      },
-      {
-        hostname: 'ideal-memory-acda41f12c.strapiapp.com'
-      },
-      {
-        hostname: 'ideal-memory-acda41f12c.media.strapiapp.com'
       },
       {
         hostname: 'orleansmc.com'
@@ -84,12 +77,7 @@ const nextConfig = {
     defaultLocale: 'en',
   },*/
   rewrites() {
-    return [
-      {
-        source: "/uploads/:path*",
-        destination: "https://ideal-memory-acda41f12c.media.strapiapp.com/:path*",
-      },
-    ];
+    return [];
   },
   redirects() {
     return [

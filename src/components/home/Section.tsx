@@ -18,18 +18,16 @@ type SectionProps = {
 export default function Section(props: SectionProps) {
     return (
         <section className={
-            "flex justify-between items-center lg:!flex-col lg:space-y-16" +
+            "flex justify-between items-center lg:!flex-col lg:space-y-16 md:space-y-8" +
             (props.imagePosition === "right" ? " flex-row-reverse" : "")
         }>
             <div className={"flex-[3_0_0%] lg:!justify-center" + (props.imagePosition === "right" ? " flex justify-end" : " lg:flex")}
                 data-aos={"fade-" + (props.imagePosition === "right" ? "left" : "right")} data-aos-offset="100">
-                <Image className=""
+                <Image className="max-w-full h-auto"
                     quality={100}
-                    placeholder="blur"
-                    blurDataURL={props.image.replace(/\/uploads\//, "/uploads/thumbnail_")}
                     src={props.image} alt={props.imageAlt} width={props.imageWidth} height={props.imageHeight} />
             </div>
-            <div className="flex-[4_0_0%] lg:flex lg:flex-col lg:items-center lg:justify-center lg:text-center lg:max-w-[40rem]" data-aos={"fade-" + (props.imagePosition === "right" ? "right" : "left")} data-aos-offset="100">
+            <div className="flex-[4_0_0%] lg:flex lg:flex-col lg:items-center lg:justify-center lg:text-center lg:max-w-[40rem] md:max-w-full" data-aos={"fade-" + (props.imagePosition === "right" ? "right" : "left")} data-aos-offset="100">
                 <h2 className="text-3xl font-semibold mb-5">
                     {props.title}
                 </h2>

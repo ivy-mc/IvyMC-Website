@@ -40,8 +40,8 @@ export default async function PurchaseHandler(req: NextApiRequest, res: NextApiR
         return res.status(400).json({ name: "Missing fields" });
     }
 
-    // Ensure ranks are fetched (will use cache or fetch fresh data)
-    await RanksManager.getInstance().getRanks();
+    // Statik rank verisi kullan
+    const ranks = await RanksManager.getInstance().getRanks();
     const rank = RanksManager.getInstance().getRankByCreditMarketId(rankCreditMarketId);
     if (!rank) {
         return res.status(400).json({ name: "Invalid rank" });

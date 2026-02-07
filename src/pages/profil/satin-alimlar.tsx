@@ -39,13 +39,13 @@ export default function PurchasesPage({ user, marketHistory }: PurchasesPageProp
         mode="normal"
         autoplay={true}
         style={{ pointerEvents: 'none' }}
-        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
+        src="/assets/animations/diamond.json"
     />
 
     return (
         <div data-aos="fade">
             <div className='flex items-start justify-between md:flex-col-reverse md:gap-6'>
-                <h2 className='text-3xl font-semibold text-white'>Satın Alımlar</h2>
+                <h2 className='text-3xl md:text-2xl font-semibold text-white'>Satın Alımlar</h2>
                 <span className={
                     `text-base font-semibold text-white inline-block px-3 py-2 rounded-md`}
                     style={{ backgroundColor: Util.getRankColor(user.player.rank) }}

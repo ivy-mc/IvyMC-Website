@@ -67,10 +67,10 @@ export default function Footer() {
     return (
         <footer className="container mb-8 mt-16">
             <div className="rounded-tl-lg rounded-tr-lg bg-dark-950 px-12 py-9 md:py-6 md:px-6">
-                <div className="flex gap-10 lg:flex-wrap items-center justify-between md:flex-col">
+                <div className="flex gap-10 lg:flex-wrap items-center justify-between md:flex-col md:gap-8">
                     <div className="flex flex-col items-center space-y-2">
                         <Image
-                            src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571477/logo_3619be7de1.png"
+                            src="/assets/logo.png"
                             alt="IvyMC Logo"
                             width={245}
                             placeholder="empty"
@@ -80,7 +80,7 @@ export default function Footer() {
                             We are in no way affiliated with or endorsed by Mojang, AB.
                         </p>
                     </div>
-                    <div className="flex gap-20 md:flex-wrap md:gap-10">
+                    <div className="flex gap-20 md:flex-wrap md:gap-10 sm:gap-6 md:justify-center">
                         {
                             navigators.map((navigator, index) => (
                                 <div key={index} className="flex flex-col space-y-2 h-fit">

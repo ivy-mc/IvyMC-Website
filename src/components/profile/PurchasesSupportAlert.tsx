@@ -41,9 +41,9 @@ export default function PurchasesSupportAlert({ userEmail }: PurchasesSupportAle
     }
 
     return (
-        <div className="bg-gradient-to-r from-amber-900/40 via-orange-900/40 to-red-900/40 border-2 border-amber-500/70 rounded-xl p-6 mb-8 shadow-2xl animate__animated animate__pulse animate__slow animate__infinite">
-            <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
+        <div className="bg-gradient-to-r from-amber-900/40 via-orange-900/40 to-red-900/40 border-2 border-amber-500/70 rounded-xl p-6 md:p-4 mb-8 shadow-2xl animate__animated animate__pulse animate__slow animate__infinite">
+            <div className="flex items-start gap-4 md:gap-3">
+                <div className="flex-shrink-0 md:hidden">
                     <div className="bg-amber-500/20 rounded-full p-3 animate__animated animate__bounce animate__infinite animate__slow">
                         <span className="material-symbols-rounded text-amber-300 text-5xl drop-shadow-[0_0_10px_rgba(251,191,36,0.7)]">
                             warning
@@ -51,7 +51,7 @@ export default function PurchasesSupportAlert({ userEmail }: PurchasesSupportAle
                     </div>
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-amber-200 mb-3 drop-shadow-lg flex items-center gap-2">
+                    <h3 className="text-2xl md:text-xl sm:text-lg font-bold text-amber-200 mb-3 drop-shadow-lg flex items-center gap-2">
                         <span className="animate__animated animate__flash animate__infinite animate__slow">⚠️</span>
                         Satın Alımınız Hesabınıza Gelmedi mi?
                     </h3>
@@ -119,7 +119,7 @@ export default function PurchasesSupportAlert({ userEmail }: PurchasesSupportAle
                         </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-1 gap-4">
                         <div className="group bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-2 border-green-500/50 rounded-xl p-5 hover:border-green-400 hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] transition-all duration-300">
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="bg-green-500/20 rounded-full p-2">

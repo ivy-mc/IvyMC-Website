@@ -41,15 +41,15 @@ export default function PendingMembershipAlert({ userEmail }: PendingMembershipA
     }
 
     return (
-        <div className="bg-amber-900/30 border-2 border-amber-500 rounded-lg p-6 mb-6 animate__animated animate__fadeIn">
-            <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
+        <div className="bg-amber-900/30 border-2 border-amber-500 rounded-lg p-6 md:p-4 mb-6 animate__animated animate__fadeIn">
+            <div className="flex items-start gap-4 md:gap-3">
+                <div className="flex-shrink-0 md:hidden">
                     <span className="material-symbols-rounded text-amber-400 text-4xl">
                         notifications_active
                     </span>
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-xl font-bold text-amber-300 mb-2">
+                    <h3 className="text-xl md:text-lg font-bold text-amber-300 mb-2">
                         🎉 Bekleyen Membership Satın Alımınız Var!
                     </h3>
                     <p className="text-zinc-200 mb-4">
@@ -77,7 +77,7 @@ export default function PendingMembershipAlert({ userEmail }: PendingMembershipA
                             Rank'lerinizi almak için aşağıdaki seçeneklerden birini kullanın:
                         </p>
 
-                        <div className="grid md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-1 gap-3">
                             <div className="bg-green-900/20 border border-green-600/50 rounded-lg p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <span className="material-symbols-rounded text-green-400">

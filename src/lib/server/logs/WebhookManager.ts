@@ -24,6 +24,19 @@ if (!global.pendingWebhooksInterval && !isServerless && process.env.NEXT_RUNTIME
     }, 500);
 }
 
+// Serverless ortamda webhook'ları hemen gönder (interval yok)
+async function sendWebhookImmediate(webhook: Webhook) {
+    if (isServerless) {
+        try {
+            await webhook.send();
+        } catch (err) {
+            console.error('[WebhookManager] Serverless webhook send error:', err);
+        }
+    } else {
+        sendWebhookImmediate(webhook);
+    }
+}
+
 export default class WebhookManager {
     static sendWebsiteWebhook(source: string, message: string) {
         const webhook = new Webhook("https://discord.com/api/webhooks/1278432332109320242/zm0jdN1SZHUBBCMsq7idnZKnRXpGk7neo6AenO-ys0OYPixmhu6lQ2gHXu3GITZXg9JS");
@@ -45,7 +58,7 @@ export default class WebhookManager {
             })
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendEmbedWebhook(title: string, description: string, color: number = 0x00FF00) {
@@ -61,7 +74,7 @@ export default class WebhookManager {
             });
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendLoginWebhook(user: User, ip: string) {
@@ -88,7 +101,7 @@ export default class WebhookManager {
             .setColor("#00FF00");
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendLogoutWebhook(user: User, ip: string) {
@@ -115,7 +128,7 @@ export default class WebhookManager {
             .setColor("#FF0000");
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendRegisterWebhook(username: string, ip: string) {
@@ -142,7 +155,7 @@ export default class WebhookManager {
             .setColor("#00FF00");
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendCreditMarketPurchaseWebhook(user: User, ip: string, product: string, price: number) {
@@ -179,7 +192,7 @@ export default class WebhookManager {
             .setColor("#00FF00");
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendCreditPurchaseFailedWebhook(product: BuyMeACoffeeData) {
@@ -216,7 +229,7 @@ export default class WebhookManager {
             .setColor("#FF0000");
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 
     static sendCreditPurchaseWebhook(product: BuyMeACoffeeData, user: WebUser) {
@@ -224,9 +237,9 @@ export default class WebhookManager {
             "https://discord.com/api/webhooks/1280952460327915520/R3Kz-JoqKMb4i-7ilhTGCGwLl-v6FNbJdRV6A0waLrMJ5KK3rqBqTiObZUCBpmO558Q8"
         );
         const embed = new Embed()
-            .setTitle("Kredi Satın Alan Oyuncu Bulundu!")
+            .setTitle("✨ Mücevher Satın Alan Oyuncu Bulundu!")
             .addField({
-                name: "Kullanıcı",
+                name: "Oyuncu",
                 value: `${user.username} (${product.supporter_name})`,
                 inline: true
             })
@@ -236,7 +249,7 @@ export default class WebhookManager {
                 inline: true
             })
             .addField({
-                name: "Satın Alınan Ürünler",
+                name: "Satın Alınan Paketler",
                 value: product.extras.map((extra: BuyMeACoffeeExtra) => extra.title).join(", "),
                 inline: false
             })
@@ -253,6 +266,6 @@ export default class WebhookManager {
             .setColor("#00FF00");
 
         webhook.addEmbed(embed);
-        global.pendingWebhooks.push(webhook);
+        sendWebhookImmediate(webhook);
     }
 }

@@ -11,18 +11,15 @@ export default function GuideCard({ guide }: { guide: Guide }) {
             href={`/rehber/${guide.attributes.path}`}
             className="lg:w-full guide_card flex-[1_0_0%] hover:scale-105 
             transition-transform transform-gpu duration-300 w-full">
-            <div className={styles.guide_card__icon + " min-w-80 h-80 "}>
+            <div className={styles.guide_card__icon + " min-w-0 h-80 md:h-60 "}>
                 <div className={styles.guide_card__icon__background}
-                    style={{ background: `url(${guide.attributes.icon.data.attributes.url}) center center / cover no-repeat` }}></div>
+                    style={{ background: `url(${guide.attributes.icon}) center center / cover no-repeat` }}></div>
                 <Image
-                    src={guide.attributes.icon.data.attributes.url}
+                    className="max-w-full h-auto"
+                    src={guide.attributes.icon}
                     alt="Server Icon"
                     width={210}
                     height={210}
-                    placeholder='blur'
-                    blurDataURL={guide.attributes.icon.data.attributes.url
-                        .replace("/uploads/", "/uploads/thumbnail_")
-                    }
                 />
             </div>
             <div className="mt-4">

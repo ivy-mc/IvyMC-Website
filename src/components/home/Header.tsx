@@ -28,9 +28,9 @@ export default function Hero() {
     return (
         <>
             <header data-aos="fade-down" data-offset="100">
-                <div className="flex flex-col justify-center items-center h-[47rem]">
-                    <Image className=""
-                        src="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768571477/logo_3619be7de1.png" alt="Logo"
+                <div className="flex flex-col justify-center items-center h-[47rem] md:h-[30rem] sm:h-[24rem]">
+                    <Image className="max-w-full md:max-w-[80vw] sm:max-w-[70vw] h-auto"
+                        src="/assets/logo.png" alt="Logo"
                         quality={100}
                         placeholder="empty"
                         width={245 * 2.6}
@@ -43,7 +43,7 @@ export default function Hero() {
                             onClick={handleCopy}
                             className="flex items-center space-x-2 text-center text-lg rounded-md font-bold text-white 
                             transition-all duration-300 leading-7 px-8 py-4 cursor-pointer shadow-lg
-                            bg-gray-500/85 hover:bg-gray-500 min-w-[340px] h-[60px] justify-center overflow-hidden relative">
+                            bg-gray-500/85 hover:bg-gray-500 min-w-[340px] sm:min-w-[280px] h-[60px] sm:h-[50px] sm:text-base sm:px-6 justify-center overflow-hidden relative">
                             <div className={`flex items-center space-x-2 transition-all duration-300 ease-out absolute
                                 ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
                                 <span className="material-symbols-rounded !text-4xl !max-w-[36px]">

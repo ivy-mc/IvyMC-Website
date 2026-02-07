@@ -11,6 +11,7 @@ export default function RankCard(props: {
     user?: User;
     title: string;
     price: number;
+    priceEur?: number;
     credit_market_id: string;
     discount?: {
         percentage: number;
@@ -31,8 +32,49 @@ export default function RankCard(props: {
 }) {
     const [showPopup, setShowPopup] = React.useState(false);
     const [purchasing, setPurchasing] = React.useState<'balance' | 'card' | null>(null);
+    const [priceInTRY, setPriceInTRY] = React.useState<number>(0);
+    const [priceEurFormatted, setPriceEurFormatted] = React.useState<string>('');
     const coinRef = React.useRef<HTMLTemplateElement>(null);
     const coinRef2 = React.useRef<HTMLTemplateElement>(null);
+
+    // EUR → TRY dönüştürme (API'den real-time kur çek)
+    React.useEffect(() => {
+        // Test: props kontrol et
+        console.log(`[RankCard] Props:`, {
+            title: props.title,
+            priceEur: props.priceEur,
+            credit_market_id: props.credit_market_id
+        });
+
+        // Eğer priceEur undefined ise, title'dan guesstimate yap (debug için)
+        let eurPrice = props.priceEur;
+        if (!eurPrice || eurPrice <= 0) {
+            if (props.credit_market_id === 'cirak') eurPrice = 5;
+            else if (props.credit_market_id === 'asil') eurPrice = 10;
+            else if (props.credit_market_id === 'soylu') eurPrice = 20;
+            else if (props.credit_market_id === 'senyor') eurPrice = 40;
+        }
+
+        if (eurPrice && eurPrice > 0) {
+            // API'den real-time fiyat al
+            fetch(`/api/utils/convert-eur-to-try?amount=${eurPrice}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.roundedTryAmount > 0) {
+                        setPriceInTRY(data.roundedTryAmount);
+                        setPriceEurFormatted(`${eurPrice}€`);
+                        console.log(`[RankCard ${props.title}] EUR: ${eurPrice}€ → TRY: ${data.roundedTryAmount}₺ (Kur: ${data.exchangeRate}, Cached: ${data.isCached})`);
+                    }
+                })
+                .catch(err => {
+                    console.error('[RankCard] API error:', err);
+                    // Fallback: lokal hesaplama (51.4 TL/EUR)
+                    const fallbackTRY = Math.round((eurPrice * 51.4) / 5) * 5;
+                    setPriceInTRY(fallbackTRY);
+                    setPriceEurFormatted(`${eurPrice}€`);
+                });
+        }
+    }, [props.priceEur, props.credit_market_id, props.title]);
 
     let discount = props.discount;
     if (discount) {
@@ -46,11 +88,6 @@ export default function RankCard(props: {
     
     const _price = Math.floor(props.price * 100 / (100 - (props.discount?.percentage || 0)));
     const price = props.price;
-    
-    // TL fiyatı hesapla (EUR → TRY kuru: 38.5)
-    const EUR_TO_TRY = 38.5;
-    const priceInTRY = Math.floor(price * EUR_TO_TRY);
-    const _priceInTRY = Math.floor(_price * EUR_TO_TRY);
 
     // Rütbe renklerini tanımla
     const rankColors: Record<string, { border: string; shadow: string; text: string; gradient: string; borderHex: string; popupShadow: string; }> = {
@@ -114,7 +151,7 @@ export default function RankCard(props: {
         mode="normal"
         autoplay={true}
         style={{ pointerEvents: 'none' }}
-        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
+        src="/assets/animations/diamond.json"
     />
 
     // @ts-ignore
@@ -126,7 +163,7 @@ export default function RankCard(props: {
         mode="normal"
         autoplay={true}
         style={{ pointerEvents: 'none' }}
-        src="https://res.cloudinary.com/dkcpwrjza/raw/upload/v1768665447/Diamond_green_v3_dc1fdd7199.json"
+        src="/assets/animations/diamond.json"
     />
 
     const [randomId, setRandomId] = React.useState<string>("");
@@ -211,9 +248,9 @@ export default function RankCard(props: {
                                 : undefined
                 }
             >
-                <div className="flex flex-col gap-4 pt-4">
+                <div className="flex flex-col gap-0 w-full">
                     {props.privileges && props.privileges.groups && (
-                        <div className="flex flex-col gap-4 mb-4 px-4">
+                        <div className="flex flex-col gap-4 overflow-y-auto max-h-[45vh] pr-2">
                             {props.privileges.groups.map((group, groupIndex) => (
                                 <div key={groupIndex} className='flex flex-col gap-3'>
                                     <h4 className='text-lg font-semibold text-zinc-300'>
@@ -235,10 +272,10 @@ export default function RankCard(props: {
                             ))}
                         </div>
                     )}
-                    <div className="flex flex-col gap-2 px-4 pb-0">
+                    <div className="flex flex-col gap-2 w-full flex-shrink-0 pt-4 border-t border-zinc-600/30">
                         {
                             alreadyHasARank ?
-                                <div className="text-zinc-200 rounded-lg max-w-[28rem] text-center text-lg">
+                                <div className="text-zinc-200 rounded-lg max-w-[28rem] md:max-w-full text-center text-lg md:text-base">
                                     Zaten bir rütbe sahibisiniz! Eğer bunu değiştirmek
                                     istiyorsanız destek ekibimizle iletişime geçebilirsiniz.
                                 </div>
@@ -260,7 +297,7 @@ export default function RankCard(props: {
                                             </p>
 
                                             {/* İki sütunlu buton layout */}
-                                            <div className="grid grid-cols-2 gap-3 w-full">
+                                            <div className="grid grid-cols-2 sm:grid-cols-1 gap-3 w-full">
                                                 {/* Bakiye ile satın alma */}
                                                 <div className="flex flex-col">
                                                     <Button
@@ -323,7 +360,7 @@ export default function RankCard(props: {
                                                 </div>
 
                                                 {/* Kart ile satın alma (Stripe) */}
-                                                <div className="flex flex-col">
+                                                <div className="flex flex-col relative group">
                                                     <Button
                                                         type="button"
                                                         onClick={async () => {
@@ -358,16 +395,29 @@ export default function RankCard(props: {
                                                             <>
                                                                 <span className="text-sm font-semibold">Kart</span>
                                                                 <span className="text-lg font-bold">
-                                                                    {new Intl.NumberFormat().format(priceInTRY).replaceAll(",", ".")}₺
+                                                                    {priceInTRY > 0 
+                                                                        ? `${new Intl.NumberFormat().format(priceInTRY).replaceAll(",", ".")}₺`
+                                                                        : "Yükleniyor..."}
                                                                 </span>
                                                             </>
                                                         )}
                                                     </Button>
+                                                    
+                                                    {/* Hover Tooltip */}
+                                                    {priceEurFormatted && (
+                                                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+                                                            <div className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-xs text-zinc-200 whitespace-nowrap">
+                                                                <p className="font-semibold mb-1">Fiyat: {priceEurFormatted}</p>
+                                                                <p className="text-zinc-400">Kur değişikliklerine tabi</p>
+                                                                <p className="text-amber-300 text-xs mt-1">3D Doğrulama sayfasında teyit edin</p>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
 
                                             {/* Önemli Uyarı - Butonların altında */}
-                                            <div className="bg-amber-900/30 border border-amber-600/50 rounded-lg p-2 w-full mb-0">
+                                            <div className="bg-amber-900/30 border border-amber-600/50 rounded-lg p-2 w-full mt-1 mb-0">
                                                 <div className="flex gap-2 items-start">
                                                     <span className="material-symbols-rounded text-amber-400 text-base flex-shrink-0">
                                                         warning
@@ -378,18 +428,18 @@ export default function RankCard(props: {
                                                 </div>
                                             </div>
                                         </div>
-                                            : <p className="text-lg text-zinc-200 max-w-[28rem] text-center">
+                                            : <p className="text-lg md:text-base text-zinc-200 max-w-[28rem] md:max-w-full text-center">
                                                 Bu rütbeyi satın alabilmek için giriş yapmalısınız.
                                             </p>}
                     </div>
                 </div>
             </PopUp>
             <div
-        className={`p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300
+        className={`p-6 md:p-4 rounded-lg shadow-lg cursor-pointer transition-all duration-300
         bg-gradient-to-br from-dark-800 to-dark-900
         border-2 border-transparent
         ${currentRankColor.border} ${currentRankColor.shadow} hover:scale-105
-        flex gap-6 items-center relative md:flex-col`}
+        flex gap-6 md:gap-4 items-center relative md:flex-col`}
         data-aos="zoom-in"
         onMouseEnter={handleCardMouseEnter}
         onMouseLeave={handleCardMouseLeave}
@@ -407,20 +457,19 @@ export default function RankCard(props: {
                     />
                 </div>
                 <div className="flex-1 md:flex md:flex-col md:items-center">
-                    <h2 className='text-2xl font-semibold mb-2 uppercase md:text-center'>
+                    <h2 className='text-2xl md:text-xl font-semibold mb-2 uppercase md:text-center'>
                         {props.title}
                     </h2>
                     <div className="md:flex md:flex-col md:items-center">
                         {discount &&
                             <div className="flex items-center gap-2">
                                 <span className='text-zinc-400 text-xl line-through'>{new Intl.NumberFormat().format(_price).replaceAll(",", ".")}</span>
-                                <span className='text-zinc-400 text-sm'>/ {new Intl.NumberFormat().format(_priceInTRY).replaceAll(",", ".")}₺</span>
                             </div>
                         }
                         <div className="flex items-center gap-3">
                             {/* Bakiye fiyatı */}
                             <div className="flex items-center gap-1">
-                                <h3 className='text-2xl font-semibold text-green-400'>
+                                <h3 className='text-2xl md:text-xl font-semibold text-green-400'>
                                     {new Intl.NumberFormat().format(price).replaceAll(",", ".")}
                                 </h3>
                                 <div className='w-9 h-9'>
@@ -431,7 +480,7 @@ export default function RankCard(props: {
                             {/* TL fiyatı */}
                             <span className="text-zinc-400 text-xl">/</span>
                             <div className="flex items-center gap-1">
-                                <h3 className={`text-2xl font-semibold ${currentRankColor.text}`}>
+                                <h3 className={`text-2xl md:text-xl font-semibold ${currentRankColor.text}`}>
                                     {new Intl.NumberFormat().format(priceInTRY).replaceAll(",", ".")}
                                 </h3>
                                 <span className={`text-xl ${currentRankColor.text}`}>₺</span>

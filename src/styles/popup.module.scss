@@ -39,19 +39,28 @@
 
     &__content {
         position: relative;
-        min-width: 700px;
-        max-width: 800px;
-        max-height: 70vh;
+        min-width: 550px;
+        max-width: 750px;
+        height: auto;
+        max-height: none;
         display: flex;
         flex-direction: column;
         border-radius: 5px;
         transform: translateZ(-100px);
+        width: auto;
 
         @media screen and (max-width: 768px) {
             width: 90%;
-            min-width: 90%;
+            min-width: unset;
             max-width: 90%;
             max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        @media screen and (max-width: 576px) {
+            width: 95%;
+            max-width: 95%;
+            max-height: 80vh;
         }
 
         &--custom {
@@ -80,16 +89,16 @@
         $header-footer-height: 20px;
 
         &__body {
-            padding: 15px 20px;
+            padding: 20px 25px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             overflow: visible;
-            min-height: 0;
+            min-height: auto;
             
             @media screen and (max-width: 768px) {
-                padding: 12px 15px;
+                padding: 15px 18px;
             }
 
             p {
@@ -133,8 +142,34 @@
             border-top: none;
             gap: 10px;
             min-height: $header-footer-height;
-            padding: $padding;
+            padding: 0px 15px;
             padding-top: 0;
         }
+    }
+}
+
+/* Scrollbar Styling */
+.popup__content__body {
+    /* Firefox */
+    scrollbar-color: #d1d5db transparent;
+    scrollbar-width: thin;
+}
+
+/* Chrome, Safari, Edge */
+.popup__content__body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.popup__content__body::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.popup__content__body::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+    
+    &:hover {
+        background: #e5e7eb;
     }
 }

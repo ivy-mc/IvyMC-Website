@@ -8,6 +8,9 @@ import DiscordOauth2Manager from "../../discord/DiscordOauth2Manager";
 import { pushMetadata } from "../../discord/MetadataUtil";
 import PlayerManager from "../../auth/PlayerManager";
 
+// Check if running in serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 declare global {
     var permsManager: PermsManager;
     var userPermissionsMap: Map<string, string[]>;
@@ -20,17 +23,18 @@ export default class PermsManager {
         ConsoleManager.info('PermsManager', 'PermsManager initialized');
         if (!global.userPermissionsMap) {
             global.userPermissionsMap = new Map();
-            if (!fs.existsSync(PERMISSIONS_PATH)) {
-                fs.writeFileSync(PERMISSIONS_PATH, '[]');
+            try {
+                if (fs.existsSync(PERMISSIONS_PATH)) {
+                    const jsonArray = JSON.parse(
+                        fs.readFileSync(PERMISSIONS_PATH, { encoding: 'utf-8' })
+                    );
+                    jsonArray.forEach((json: any) => {
+                        userPermissionsMap.set(json.uuid, json.permissions);
+                    });
+                }
+            } catch (err) {
+                ConsoleManager.error('PermsManager', 'permissions.json okunamadı (serverless ortamda normal): ' + (err as any).message);
             }
-
-            const jsonArray = JSON.parse(
-                fs.readFileSync(PERMISSIONS_PATH, { encoding: 'utf-8' })
-            )
-
-            jsonArray.forEach((json: any) => {
-                userPermissionsMap.set(json.uuid, json.permissions);
-            });
         }
 
         //setInterval(this.checkPermissions, 10000);
@@ -124,11 +128,18 @@ export default class PermsManager {
                 userPermissionsMap.set(uuid, permissions);
             });
 
-            const jsonArray: any[] = [];
-            userPermissionsMap.forEach((permissions, uuid) => {
-                jsonArray.push({ uuid, permissions });
-            });
-            fs.writeFileSync(PERMISSIONS_PATH, JSON.stringify(jsonArray, null, 2));
+            // Serverless ortamda dosya yazımı atla (read-only filesystem)
+            if (!isServerless) {
+                const jsonArray: any[] = [];
+                userPermissionsMap.forEach((permissions, uuid) => {
+                    jsonArray.push({ uuid, permissions });
+                });
+                try {
+                    fs.writeFileSync(PERMISSIONS_PATH, JSON.stringify(jsonArray, null, 2));
+                } catch (err) {
+                    ConsoleManager.error('PermsManager', 'permissions.json yazılamadı: ' + (err as any).message);
+                }
+            }
         } catch (error) {
             console.error('Hata:', error);
         }

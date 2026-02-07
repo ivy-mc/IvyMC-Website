@@ -33,13 +33,13 @@ export default function StorePage({ user }: StoreProps) {
 
     return (
         <>
-            <div className='mt-28' data-aos="fade-down">
+            <div className='mt-28 md:mt-20' data-aos="fade-down">
                 <div
-                    className='flex flex-col relative py-16 px-12 md:p-12 rounded-lg shadow-lg 
+                    className='flex flex-col relative py-16 px-12 md:py-10 md:px-6 sm:py-8 sm:px-4 rounded-lg shadow-lg 
                     bg-cover bg-center bg-no-repeat overflow-hidden
                     md:items-center'
                     style={{
-                        backgroundImage: `url("https://res.cloudinary.com/dkcpwrjza/image/upload/v1768598806/magaza_bg_cd740627c7.png")`
+                        backgroundImage: `url("/assets/store/magaza-bg.png")`
                     }}>
                     {/* Dark overlay */}
                     <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
@@ -56,7 +56,7 @@ export default function StorePage({ user }: StoreProps) {
                     title="Rütbeler"
                     href='/magaza/rutbeler'
                     description="Sunucumuzda bulunan rütbeleri inceleyin ve avantajları keşfedin."
-                    icon="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768636849/rutbe_icon_19e3f68c59.png"
+                    icon="/assets/store/rutbe-icon.png"
                     button_text='Rütbeleri İncele'
                 />
                 <PopUp
@@ -87,7 +87,7 @@ export default function StorePage({ user }: StoreProps) {
                     setShowPopup={setShowPopup}
                     href='/magaza'
                     description="Sunucumuzda bulunan kasaları inceleyin ve içeriklerini keşfedin."
-                    icon="https://res.cloudinary.com/dkcpwrjza/image/upload/v1768636876/kasa_icon_23baa55309.png"
+                    icon="/assets/store/kasa-icon.png"
                     button_text='Kasaları İncele'
                 />
             </div>
