@@ -30,7 +30,7 @@ Bu rehber, sunucumuza ilk kez katılan oyuncular için hazırlanmıştır.
             publishedAt: "2025-01-10T10:00:00.000Z",
             background: "#1a1a2e",
             path: "baslangic-rehberi",
-            icon: "/assets/guides/baslangic-rehberi.png",
+            icon: "sports_esports",
         },
     },
 ];

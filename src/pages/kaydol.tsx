@@ -217,14 +217,14 @@ export default function RegisterPage(props: PageProps) {
                         <input
                             required
                             type="checkbox"
-                            className='rounded-lg w-5 h-5 accent-purple-500 duration-300 hover:accent-[#a950fa]'
+                            className='rounded-lg w-5 h-5 accent-green-500 duration-300 hover:accent-green-400'
                         />
                         <span className='ml-2 text-base text-zinc-400'>
-                            <a href="/rehber/kurallar" className='text-purple-400 hover:text-purple-300 duration-300'>
+                            <a href="/rehber/kurallar" className='text-green-400 hover:text-green-300 duration-300'>
                                 Kurallar
-                            </a>, <a href="/kullanim-sartlari" className='text-purple-400 hover:text-purple-300 duration-300'>
+                            </a>, <a href="/kullanim-sartlari" className='text-green-400 hover:text-green-300 duration-300'>
                                 Kullanım Şartları
-                            </a> ve <a href="/gizlilik-politakasi" className='text-purple-400 hover:text-purple-300 duration-300'>
+                            </a> ve <a href="/gizlilik-politakasi" className='text-green-400 hover:text-green-300 duration-300'>
                                 Gizlilik Politikası
                             </a>
                             'nı okudum ve kabul ediyorum
@@ -232,7 +232,7 @@ export default function RegisterPage(props: PageProps) {
                     </label>
                     <button
                         type="submit"
-                        className='p-4 bg-purple-500 text-zinc-200 rounded-lg hover:bg-purple-400 duration-300'
+                        className='p-4 bg-green-500 text-zinc-200 rounded-lg hover:bg-green-400 duration-300'
                     >
                         Kaydol
                     </button>
@@ -241,7 +241,7 @@ export default function RegisterPage(props: PageProps) {
                     <span className='text-zinc-400'>Hesabınız var mı?</span>
                     <Link
                         href={'/giris-yap'}
-                        className='ml-2 text-purple-400 hover:text-purple-300'
+                        className='ml-2 text-green-400 hover:text-green-300'
                     >
                         Giriş Yap
                     </Link>

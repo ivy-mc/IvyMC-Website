@@ -22,6 +22,10 @@ export default function Footer() {
                 {
                     name: "Mağaza",
                     url: "/magaza"
+                },
+                {
+                    name: "Destek",
+                    url: "/destek"
                 }
             ]
         },
@@ -43,23 +47,6 @@ export default function Footer() {
                 {
                     name: "Gizlilik Politikası",
                     url: "/gizlilik-politikasi"
-                }
-            ]
-        },
-        {
-            name: "İletişim",
-            links: [
-                {
-                    name: "Destek",
-                    url: "/destek"
-                },
-                {
-                    name: "İletişim",
-                    url: "/discord"
-                },
-                {
-                    name: "Sponsorluk",
-                    url: "mailto:iletisim@ivymc.com"
                 }
             ]
         }
@@ -136,10 +123,12 @@ export default function Footer() {
             <div className="rounded-bl-lg rounded-br-lg bg-dark-800 px-12 py-3 md:px-6">
                 <div className="flex items-center justify-between md:flex-col md:space-y-1">
                     <p className="text-zinc-400 text-base md:text-center">
-                        © 2024 IvyMC. Tüm hakları saklıdır.
+                        © 2026 IvyMC. Tüm hakları saklıdır.
                     </p>
                     <p className="text-zinc-400 text-base md:text-center">
-                        Mustafa Can tarafından geliştirildi.
+                        <Link href="https://github.com/mustafacangoktas" target="_blank" className="underline hover:text-purple-400 transition-colors">
+                            Mustafa Can
+                        </Link> tarafından geliştirildi.
                     </p>
                 </div>
             </div>

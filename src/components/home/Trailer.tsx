@@ -1,6 +1,5 @@
 import React from "react";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
-import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
+import Image from "next/image";
 import Button from "../common/Button";
 
 export default function Trailer() {
@@ -10,15 +9,16 @@ export default function Trailer() {
                 <h2 className="text-3xl font-semibold mb-3 text-center"
                 >IvyMC'yi Keşfedin</h2>
                 <p className="text-lg text-center text-zinc-400"
-                >Sunucumuzun tanıtım videosunu izleyerek IvyMC'nin dünyasını keşfedin!</p>
+                >Sunucumuzun atmosferini hisset ve maceraya katıl!</p>
             </div>
             <div className="w-3/4 rounded-lg overflow-hidden shadow-lg md:w-full">
-                <LiteYouTubeEmbed
-                    poster="maxresdefault"
-                    thumbnail="/uploads/castle_entrance_3ef073eff4.png"
-                    id="nkIAsR0UBfY"
-                    params="afmt=251&rel=0"
-                    title="IvyMC Trailer"
+                <Image
+                    src="/assets/profile/profile-bg.png"
+                    alt="IvyMC Dünyası"
+                    width={1200}
+                    height={600}
+                    className="w-full h-auto object-cover"
+                    quality={100}
                 />
             </div>
         </section>

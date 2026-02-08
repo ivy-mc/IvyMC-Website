@@ -30,9 +30,9 @@ export default function News({ lastBlog }: NewsProps) {
         <section className="flex flex-col justify-center items-center space-y-8" data-aos="fade-up" data-offset="100">
             <div className="flex flex-col justify-center items-center">
                 <h2 className="text-3xl font-semibold mb-3"
-                >OrleansMC Haberler</h2>
+                >IvyMC Haberler</h2>
                 <p className="text-lg text-center text-zinc-400"
-                >OrleansMC sunucusu ile ilgili haberler ve güncellemeler</p>
+                >IvyMC sunucusu ile ilgili haberler ve güncellemeler</p>
             </div>
             <div className="lg:max-w-[40rem] md:max-w-full">
                 <Link

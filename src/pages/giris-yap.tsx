@@ -126,7 +126,7 @@ export default function LoginPage(props: PageProps) {
                         <label className='flex items-center m-1 cursor-pointer w-fit'>
                             <input
                                 type="checkbox"
-                                className='rounded-lg w-5 h-5 accent-purple-500 duration-300 hover:accent-[#a950fa]'
+                                className='rounded-lg w-5 h-5 accent-green-500 duration-300 hover:accent-green-400'
                             />
                             <span className='ml-2 text-base text-zinc-400'>
                                 Beni Hatırla
@@ -144,7 +144,7 @@ export default function LoginPage(props: PageProps) {
                         />
                         <button
                             type="submit"
-                            className='p-4 bg-purple-500 text-zinc-200 rounded-lg hover:bg-purple-400 duration-300'
+                            className='p-4 bg-green-500 text-zinc-200 rounded-lg hover:bg-green-400 duration-300'
                         >
                             Giriş Yap
                         </button>
@@ -153,7 +153,7 @@ export default function LoginPage(props: PageProps) {
                         <span className='text-zinc-400'>Şifrenizi mi unuttunuz?</span>
                         <Link
                             href={'/sifre-sifirla'}
-                            className='ml-2 text-purple-400 hover:text-purple-300'
+                            className='ml-2 text-green-400 hover:text-green-300'
                         >
                             Şifreni Sıfırla
                         </Link>

@@ -9,23 +9,30 @@ export const BLOGS_DATA: Blog[] = [
     {
         id: 1,
         attributes: {
-            title: "IvyMC Açılış Duyurusu",
+            title: "Kapalı Beta Başladı!",
             category: "Duyuru",
-            description: `## Merhaba Oyuncular!
+            description: `## Hoş Geldiniz!
 
-IvyMC sunucusu artık açık! Sizleri benzersiz bir Minecraft deneyimine davet ediyoruz.
+IvyMC sunucusunun kapalı beta sürümü resmi olarak başladı! Seçkin oyuncularımızı aramıza davet ediyoruz.
 
-### Neler Var?
-- **Survival Dünyası**: Arkadaşlarınızla birlikte hayatta kalın
-- **Özel Etkinlikler**: Her hafta yeni etkinlikler
-- **Topluluk**: Discord sunucumuzda binlerce oyuncu
+### Beta Testi Nedir?
+Kapalı beta sürecinde sunucumuzu geliştirmek için sizin geri bildiriminize ihtiyacımız var. Oyun deneyimini, performansı ve içeriği birlikte şekillendireceğiz.
 
-Hemen sunucumuza katılın ve maceraya başlayın!`,
-            createdAt: "2025-01-15T10:00:00.000Z",
-            updatedAt: "2025-01-15T10:00:00.000Z",
-            publishedAt: "2025-01-15T10:00:00.000Z",
+### Özel Beta Avantajları
+- **Erken Erişim**: Yeni özellikleri ilk deneyenler olun
+- **Şekillendirin**: Sunucunun geleceğine doğrudan etki edin
+- **Eksklusif**: Beta testerlar için özel rozetler ve rewards
+- **Topluluk**: Gelişim sürecinde aktif olun
+
+### Bizi Destekle
+Geri bildirim, sorun raporları ve önerilerinizi paylaşarak sunucuyu iyileştirmemize yardım edin.
+
+Beta'ya katılmak için Discord sunucumuzda başvuru yapabilirsiniz!`,
+            createdAt: "2026-02-08T10:00:00.000Z",
+            updatedAt: "2026-02-08T10:00:00.000Z",
+            publishedAt: "2026-02-08T10:00:00.000Z",
             thumbnail: "/assets/blogs/acilis-duyurusu.jpg",
-            path: "/ivymc-acilis-duyurusu",
+            path: "/ivymc-kapali-beta",
         },
     },
 ];

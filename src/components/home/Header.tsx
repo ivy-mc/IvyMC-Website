@@ -28,15 +28,15 @@ export default function Hero() {
     return (
         <>
             <header data-aos="fade-down" data-offset="100">
-                <div className="flex flex-col justify-center items-center h-[47rem] md:h-[30rem] sm:h-[24rem]">
-                    <Image className="max-w-full md:max-w-[80vw] sm:max-w-[70vw] h-auto"
+                <div className="flex flex-col items-center h-[47rem] md:h-[30rem] sm:h-[24rem] pt-32 md:pt-20 md:justify-center">
+                    <Image className="max-w-full md:max-w-[75vw] sm:max-w-[65vw] h-auto"
                         src="/assets/logo.png" alt="Logo"
                         quality={100}
                         placeholder="empty"
-                        width={245 * 2.6}
-                        height={53 * 2.6}
+                        width={245 * 2.2}
+                        height={53 * 2.2}
                     />
-                    <div className="mt-10"
+                    <div className="mt-8 md:mt-10"
                         onMouseEnter={() => !copied && setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}>
                         <button 
