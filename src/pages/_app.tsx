@@ -50,9 +50,9 @@ export default function App({ Component, pageProps }: PageProps & AppProps) {
         <meta name="author" content="mustafacan.dev" />
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="application-name" content="OrleansMC" />
+        <meta name="application-name" content="IvyMC" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="OrleansMC - Minecraft Sunucusu" />
+        <meta name="apple-mobile-web-app-title" content="IvyMC - Minecraft Sunucusu" />
         <meta name="color-scheme" content="dark" />
 
         {/* Favicon */}

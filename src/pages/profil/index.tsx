@@ -12,9 +12,9 @@ ProfilePage.getLayout = function getLayout(page: React.ReactNode, pageProps: any
     return (
         <Layout profile
             user={pageProps.user}
-            title="OrleansMC - Profil"
-            description="OrleansMC sunucusundaki profilinizi yönetin."
-            ogDescription="OrleansMC sunucusundaki profilinizi yönetin."
+            title="IvyMC - Profil"
+            description="IvyMC sunucusundaki profilinizi yönetin."
+            ogDescription="IvyMC sunucusundaki profilinizi yönetin."
         >
             {page}
         </Layout>

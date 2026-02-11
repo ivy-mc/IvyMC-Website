@@ -33,7 +33,7 @@ async function getPlayerCount() {
     if ((cachedServerInfo.lastUpdate + (10 * 1000)) <= Date.now()) {
 
         serverInfo = await axios.get(
-            `https://api.mcsrvstat.us/2/${encodeURI('orleansmc.com')}`
+            `https://api.mcsrvstat.us/2/${encodeURI('ivymc.com')}`
         ).then((res) => {
             return {
                 player_count: res.data?.players?.online || 0,

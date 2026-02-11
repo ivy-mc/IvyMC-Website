@@ -1,14 +1,14 @@
-# OrleansMC Website
+# IvyMC Website
 
-OrleansMC Website is a custom website built for the OrleansMC Minecraft server community. It provides players with a modern,
+IvyMC Website is a custom website built for the IvyMC Minecraft server community. It provides players with a modern,
 clean interface to explore news, guides, their profiles, and more.  
 The project is developed with **Next.js**, **TypeScript**, **Tailwind CSS**, and is backed by **MongoDB**, **MySQL**, **Redis**, and **Docker** technologies.
 
-> This repository contains both the frontend and backend code for the website of OrleansMC Minecraft Server.
+> This repository contains both the frontend and backend code for the website of IvyMC Minecraft Server.
 
 ## 🌐 Live Website
 
-Visit the website here: [orleansmc.com](https://orleansmc.com)
+Visit the website here: [ivymc.com](https://ivymc.com)
 
 ## 🖼️ Previews
 ![Home Page](https://i.imgur.com/Pe36mb5.png)
@@ -57,8 +57,8 @@ Visit the website here: [orleansmc.com](https://orleansmc.com)
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/OrleansMC/website.git
-cd orleansmc
+git clone https://github.com/IvyMC/website.git
+cd ivymc
 npm install
 ```
 
@@ -90,8 +90,8 @@ npm start
 Or use Docker:
 
 ```bash
-docker build -t orleansmc-web .
-docker run -p 3000:3000 orleansmc-web
+docker build -t ivymc-web .
+docker run -p 3000:3000 ivymc-web
 ```
 
 ## 🚀 Vercel Serverless Deployment

@@ -68,7 +68,7 @@ const nextConfig = {
         hostname: 'flagcdn.com'
       },
       {
-        hostname: 'orleansmc.com'
+        hostname: 'ivymc.com'
       }
     ],
   },
@@ -103,7 +103,7 @@ const nextConfig = {
       },
       {
         source: '/x',
-        destination: 'https://x.com/orleansmc_',
+        destination: 'https://x.com/ivymc_',
         permanent: false,
       },
       {
@@ -113,7 +113,7 @@ const nextConfig = {
       },
       {
         source: '/instagram',
-        destination: 'https://www.instagram.com/orleansmc_',
+        destination: 'https://www.instagram.com/ivymc_',
         permanent: false,
       }
     ];
