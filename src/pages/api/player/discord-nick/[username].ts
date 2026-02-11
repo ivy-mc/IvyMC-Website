@@ -1,34 +1,30 @@
-import { NextApiRequest, NextApiResponse } from "next/types";
-import DiscordOauth2Manager from "@/lib/server/discord/DiscordOauth2Manager";
+import AuthManager from "@/lib/server/auth/AuthManager";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export const config = {
-    api: {
-        method: "GET",
-    },
-};
-
-export default async function GetPlayerDiscordNick(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { username } = req.query;
 
     if (!username || typeof username !== "string") {
-        return res.status(400).json({ error: "Username required" });
+        return res.status(400).json({ error: "Username is required" });
     }
 
     try {
-        const discordUser = await DiscordOauth2Manager.getInstance().getUser(username);
+        const user = await AuthManager.getInstance().getUser(username);
 
-        if (!discordUser) {
+        if (!user) {
+            return res.status(404).json({ linked: false, nick: "Kullanıcı bulunamadı" });
+        }
+
+        if (!user.discord) {
             return res.status(200).json({ linked: false, nick: "Discord hesabı bağlı değil" });
         }
 
-        return res.status(200).json({
-            linked: true,
-            nick: discordUser.global_name || discordUser.username || "Bilinmiyor",
-            id: discordUser.id,
-            avatar: discordUser.avatar
-        });
+        // Return the Discord username instead of global_name
+        const nick = user.discord.username;
+
+        return res.status(200).json({ linked: true, nick });
     } catch (error) {
         console.error(error);
-        return res.status(200).json({ linked: false, nick: "Discord hesabı bağlı değil" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }

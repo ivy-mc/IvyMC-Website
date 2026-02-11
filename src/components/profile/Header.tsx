@@ -121,7 +121,7 @@ export default function ProfileHeader({ user }: { user: User }) {
                                                 </svg>
                                         }
                                         <span className='text-lg md:text-base sm:text-sm font-semibold text-zinc-200'>
-                                            Discord: {user.discord.global_name}
+                                            Discord: {user.discord.username}
                                         </span>
                                     </button>
                                 )
